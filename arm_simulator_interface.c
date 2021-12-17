@@ -24,7 +24,7 @@ Contact: Guillaume.Huard@imag.fr
 #include "csapp.h"
 #include "gdb_protocol.h"
 #include "debug.h"
-#include "scanner.h"
+#include "scanner.h" 
 
 struct arm_simulator_data {
 	gdb_protocol_data_t gdb;
