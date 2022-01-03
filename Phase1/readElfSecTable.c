@@ -8,8 +8,10 @@
 /*
         find_type: trouve la chaine de caracteres associée à un entier.
 */
-void find_type(long num, char *sh_type) {
-  switch (num) {
+void find_type(long num, char *sh_type)
+{
+  switch (num)
+  {
   case 0:
     strcpy(sh_type, "NULL");
     break;
@@ -82,65 +84,78 @@ void find_type(long num, char *sh_type) {
   }
 }
 
-void revstr(char *str)  {  
-    int i, len, temp;  
-    len = strlen(str);   
-    for (i = 0; i < len/2; i++)  {   
-        temp = str[i];  
-        str[i] = str[len - i - 1];  
-        str[len - i - 1] = temp;  
-    }  
-}  
- 
+void revstr(char *str)
+{
+  int i, len, temp;
+  len = strlen(str);
+  for (i = 0; i < len / 2; i++)
+  {
+    temp = str[i];
+    str[i] = str[len - i - 1];
+    str[len - i - 1] = temp;
+  }
+}
+
 /*
         find_flags:
 */
-void find_flags(char *tab, int n) {
+void find_flags(char *tab, int n)
+{
   int i, j = 0;
-  strcpy(tab,"");
-  int tabVal[7] = {0x40, 0x20, 0x10, 0x4, 0x2, 0x1,0x0};
-  char tabChar[7] = {'I', 'S', 'M', 'X', 'A', 'W',' '};
-  for (i = 0; n > 0x0; i++) {
-    if (n >= tabVal[i]) {
+  strcpy(tab, "");
+  int tabVal[7] = {0x40, 0x20, 0x10, 0x4, 0x2, 0x1, 0x0};
+  char tabChar[7] = {'I', 'S', 'M', 'X', 'A', 'W', ' '};
+  for (i = 0; n > 0x0; i++)
+  {
+    if (n >= tabVal[i])
+    {
       tab[j] = tabChar[i];
       n -= tabVal[i];
       j++;
-    } 
+    }
   }
   tab[j] = '\0';
 }
 
-void affiche_section_table(FILE *elfFile, Elf64_Ehdr header) {
-  char flags[6]="";
+void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
+{
+  char flags[6] = "";
   Elf64_Shdr sectHdr;
-   char sh_type[25] = "";
+  char *sectNames = NULL;
+  char sh_type[25] = "";
 
-  fseek(elfFile, header.e_shoff + header.e_shstrndx * header.e_shentsize,SEEK_SET);
+  fseek(elfFile, header.e_shoff + header.e_shstrndx * header.e_shentsize, SEEK_SET);
   fread(&sectHdr, 1, sizeof(sectHdr), elfFile);
- 
+  sectNames = malloc(sectHdr.sh_size);
+  fseek(elfFile, sectHdr.sh_offset, SEEK_SET);
+  fread(sectNames, 1, sectHdr.sh_size, elfFile);
+
   printf("There are %d sectHdr headers, starting at offset 0x%lx:\n\n",
          header.e_shnum, header.e_shoff);
   printf("sectHdr Headers:\n  [Nr] Name               Type             Address "
          "          Offset\n       Size               EntSize          Flags  "
          "Link  Info  Align\n");
-  //main loop
-  for (int i = 0; i < header.e_shnum; i++) {
+  // main loop
+  for (int i = 0; i < header.e_shnum; i++)
+  {
+    char *sh_name = "";
 
     // Lecture de la sectHdr de la table du fichier
     fseek(elfFile, header.e_shoff + i * sizeof(sectHdr), SEEK_SET);
-    fread(&sectHdr, 1, sizeof(sectHdr),elfFile);
+    fread(&sectHdr, 1, sizeof(sectHdr), elfFile);
     //
-    find_flags(flags,sectHdr.sh_flags);
+    find_flags(flags, sectHdr.sh_flags);
     revstr(flags);
     //
     find_type(sectHdr.sh_type, sh_type);
+    sh_name = sectNames + sectHdr.sh_name;
 
     //
     printf("  [%2d] %-18s %-17s %016lx  %08lx\n", i, sh_name, sh_type,
            sectHdr.sh_addr, sectHdr.sh_offset);
 
     printf("       %016lx   %016lx   %-5s %-5d %-5d  %ld\n", sectHdr.sh_size,
-           sectHdr.sh_entsize,flags, sectHdr.sh_link,
+           sectHdr.sh_entsize, flags, sectHdr.sh_link,
            sectHdr.sh_info, sectHdr.sh_addralign);
   }
   //

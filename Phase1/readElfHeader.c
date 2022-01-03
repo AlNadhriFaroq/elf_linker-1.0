@@ -4,12 +4,6 @@
 #include <string.h>
 
 void affiche_header(Elf64_Ehdr header) {
-  if (header.e_ident[0] != 0x7f || header.e_ident[1] != 'E' ||
-      header.e_ident[2] != 'L' || header.e_ident[3] != 'F') {
-    printf("readelf: Error: Not an ELF file - it has the wrong magic bytes at "
-           "the start\n");
-    return;
-  }
   char class[5] = "";
   char type[30] = "";
   char version[20] = "";

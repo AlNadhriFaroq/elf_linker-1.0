@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
   Elf64_Ehdr header;
   fread(&header, 1, sizeof(header), elfFile); // Lecture de l'entete du fichier
   //test if elf file
-  if (!(header.e_ident[0] == 0x7f && header.e_ident[0] == 'E' &&
-        header.e_ident[0] == 'L' && header.e_ident[0] == 'F'))
+  if (!(header.e_ident[0] == 0x7f && header.e_ident[1] == 'E' &&
+        header.e_ident[2] == 'L' && header.e_ident[3] == 'F'))
   {
     	printf("readelf: Error: Not an ELF file - it has the wrong magic bytes at the start\n");
     	exit(1);
