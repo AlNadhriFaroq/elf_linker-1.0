@@ -12,11 +12,13 @@ int main(int argc, char *argv[])
 
   if (argc == 3 && argv[1][1] != 'x')
   {
+    // Ouverture du fichier ELF
     elfFile = fopen(argv[2], "rb");
   }
 
   else if (argc == 4 && argv[1][1] == 'x')
   {
+    // Ouverture du fichier ELF
     elfFile = fopen(argv[3], "rb");
   }
   else
@@ -31,18 +33,22 @@ int main(int argc, char *argv[])
     printf("File open error!\n");
     exit(1);
   }
-
+  
+  // Lecture de l'entete du fichier
   Elf64_Ehdr header;
-  fread(&header, 1, sizeof(header), elfFile); // Lecture de l'entete du fichier
-  // test if elf file
+  fread(&header, 1, sizeof(header), elfFile); 
+  // Verification du type du fichier, s'il est bien ELF
   if (!(header.e_ident[0] == 0x7f && header.e_ident[1] == 'E' &&
         header.e_ident[2] == 'L' && header.e_ident[3] == 'F'))
   {
     printf("readelf: Error: Not an ELF file - it has the wrong magic bytes at the start\n");
     exit(1);
   }
-
+  
+  // Option de la commande readelf
   char flag = argv[1][1];
+  
+  // Execution de la commande correspondant au flag 
   switch (flag)
   {
   case 'h':
