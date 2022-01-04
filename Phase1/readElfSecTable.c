@@ -6,10 +6,13 @@
 #include "readElfHeader.h"
 
 /*
-  find_type: trouve la chaine de caracteres associee a un entier.
+  find_type(long num, char *sh_type)
+     Lit la valeur donnée dans le premier parametre afin de definir la valeur du second
 */
 void find_type(long num, char *sh_type)
 {
+	
+  // Documentation chapitre 1-11 Figure 1-9
   switch (num)
   {
   case 0:
@@ -83,6 +86,11 @@ void find_type(long num, char *sh_type)
   }
 }
 
+/*
+  revstr(char *str):
+    prend une chaine de caracteres et modifie sa valeur en l'inversant
+    utilisee pour faire la transition big Endian / little Endian
+*/
 void revstr(char *str)
 {
   int i, len, temp;
@@ -96,12 +104,14 @@ void revstr(char *str)
 }
 
 /*
-  find_flags:
+  find_flags(char *tab, int n)
+    Traduction des actions effectuees en flags pour une section
 */
 void find_flags(char *tab, int n)
 {
   int i, j = 0;
   strcpy(tab, "");
+  // les valeurs de tabVal proviennent du site https://refspecs.linuxbase.org/elf/gabi4+/ch4.sheader.html (Figure 4.11)
   int tabVal[7] = {0x40, 0x20, 0x10, 0x4, 0x2, 0x1, 0x0};
   char tabChar[7] = {'I', 'S', 'M', 'X', 'A', 'W', ' '};
   for (i = 0; n > 0x0; i++)
@@ -116,15 +126,25 @@ void find_flags(char *tab, int n)
   tab[j] = '\0';
 }
 
+/*
+  affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
+    affichage de la table des sections et des informations pour chaque section
+*/
 void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 {
+
   char flags[6] = "";
   Elf64_Shdr sectHdr;
   char *sectNames = NULL;
   char sh_type[25] = "";
 
+  // Placement du curseur au debut de la premiere section
   fseek(elfFile, header.e_shoff + header.e_shstrndx * header.e_shentsize, SEEK_SET);
+
+  // Lecture de l'en-tete de la premiere section
   fread(&sectHdr, 1, sizeof(sectHdr), elfFile);
+
+  // Allocation dans sectNames du nom de la premiere section
   sectNames = malloc(sectHdr.sh_size);
   fseek(elfFile, sectHdr.sh_offset, SEEK_SET);
   fread(sectNames, 1, sectHdr.sh_size, elfFile);
@@ -135,21 +155,24 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
          "          Offset\n       Size               EntSize          Flags  "
          "Link  Info  Align\n");
 
-  // main loop
+  // on parcourt pour toutes les sections
   for (int i = 0; i < header.e_shnum; i++)
   {
     char *sh_name = "";
 
-    // Lecture de la sectHdr de la table du fichier
+    // Lecture de l'en-tete de la section courante
     fseek(elfFile, header.e_shoff + i * sizeof(sectHdr), SEEK_SET);
     fread(&sectHdr, 1, sizeof(sectHdr), elfFile);
 	
+    // Lecture de la section courante et recuperation des flags de ladite section
     find_flags(flags, sectHdr.sh_flags);
     revstr(flags);
 
+    // Lecture de la section courante et recuperation du type de ladite section
     find_type(sectHdr.sh_type, sh_type);
     sh_name = sectNames + sectHdr.sh_name;
 
+    // Affichage des informations sous forme de bloc de texte
     printf("  [%2d] %-18s %-17s %016lx  %08lx\n", i, sh_name, sh_type,
            sectHdr.sh_addr, sectHdr.sh_offset);
 
@@ -157,7 +180,10 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
            sectHdr.sh_entsize, flags, sectHdr.sh_link,
            sectHdr.sh_info, sectHdr.sh_addralign);
   }
-
+  /* En termes de flags, certains n'étaient pas présents dans la documentation
+      W, A, X sont dans la documentation chapitre 1-13 et 1-14 Figure 1-11
+      Les autres flags sont dans la fonction reference readelf -S <nomFichier>
+  */
   printf("Key to Flags:\n");
   printf("  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),\n");
   printf("  L (link order), O (extra OS processing required), G (group), T (TLS),\n");
