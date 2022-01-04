@@ -3,12 +3,20 @@
 #include <string.h>
 #include "readElfHeader.h"
 
+/* Fichier principal de l'etape 1 (affichage du Header) */
+
+/* affiche_header(Elf64_Ehdr)
+    affichage des informations de la structure en paramètre
+*/
 void affiche_header(Elf64_Ehdr header) {
+
+  // variables en texte pur, non récupérées dans le header
   char class[15] = "";
   char type[30] = "";
   char version[20] = "";
   char data[40] = "";
 
+  // Instanciation de la variable class en fonction de la valeur du champ EI_CLASS (DOC chapitre 1-7)
   switch (header.e_ident[4]) {
   case 0:
     strcpy(class, "Invalid class");
@@ -21,6 +29,7 @@ void affiche_header(Elf64_Ehdr header) {
     break;
   }
 
+  // Instanciation de la variable data en fonction de la valeur du champ EI_DATA (DOC chapitre 1-7)
   switch (header.e_ident[5]) {
   case 0:
     strcpy(data, "0 Invalid data encoding");
@@ -33,6 +42,7 @@ void affiche_header(Elf64_Ehdr header) {
     break;
   }
 
+  // Instanciation de la variable version en fonction de la valeur du champ EI_VERSION (DOC chapitre 1-7)
   switch (header.e_ident[6]) {
   case 0:
     strcpy(version, "0 (none)");
@@ -42,6 +52,7 @@ void affiche_header(Elf64_Ehdr header) {
     break;
   }
 
+  // Instanciation de la variable type en fonction de la valeur du champ header.e_type (DOC chapitre 1-4)
   switch (header.e_type) {
   case 0:
     strcpy(type, "NONE (No file type)");
