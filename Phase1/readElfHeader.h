@@ -1,8 +1,9 @@
 #ifndef __HEADER_H__
 #define __HEADER_H__
 
-#define EI_NIDENT 16
 #include<stdint.h>
+
+#define EI_NIDENT 16
 typedef struct {
   unsigned char e_ident[EI_NIDENT];
   uint16_t e_type;

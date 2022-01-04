@@ -1,15 +1,14 @@
-#include "readElfHeader.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "readElfHeader.h"
 
 void affiche_header(Elf64_Ehdr header) {
-  char class[5] = "";
+  char class[15] = "";
   char type[30] = "";
   char version[20] = "";
   char data[40] = "";
 
-  ////////////////////////
   switch (header.e_ident[4]) {
   case 0:
     strcpy(class, "Invalid class");
@@ -21,7 +20,7 @@ void affiche_header(Elf64_Ehdr header) {
     strcpy(class, "ELF64");
     break;
   }
-  ////////////////
+
   switch (header.e_ident[5]) {
   case 0:
     strcpy(data, "0 Invalid data encoding");
@@ -33,7 +32,7 @@ void affiche_header(Elf64_Ehdr header) {
     strcpy(data, "1's complement, big endian");
     break;
   }
-  //////////////////
+
   switch (header.e_ident[6]) {
   case 0:
     strcpy(version, "0 (none)");
@@ -42,7 +41,7 @@ void affiche_header(Elf64_Ehdr header) {
     strcpy(version, "1 (current)");
     break;
   }
-  ///////////////////
+
   switch (header.e_type) {
   case 0:
     strcpy(type, "NONE (No file type)");
@@ -69,8 +68,7 @@ void affiche_header(Elf64_Ehdr header) {
 
   /************** Affichage de l'en-tete *******************/
   printf("ELF Header:\n");
-  printf("  Magic:   %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x "
-         "%02x %02x %02x %02x %02x \n",
+  printf("  Magic:   %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x \n",
          header.e_ident[0], header.e_ident[1], header.e_ident[2],
          header.e_ident[3], header.e_ident[4], header.e_ident[5],
          header.e_ident[6], header.e_ident[7], header.e_ident[8],
@@ -83,21 +81,16 @@ void affiche_header(Elf64_Ehdr header) {
   printf("  OS/ABI:                            UNIX - System V\n");
   printf("  ABI Version:                       %d\n", header.e_ident[7]);
   printf("  Type:                              %s\n", type);
-  printf(
-      "  Machine:                           Advanced Micro Devices X86-64\n");
+  printf("  Machine:                           Advanced Micro Devices X86-64\n");
   printf("  Version:                           0x%x\n", header.e_version);
   printf("  Entry point address:               0x%lx\n", header.e_entry);
-  printf("  Start of program headers:          %lu (bytes into file)\n",
-         header.e_phoff);
-  printf("  Start of section headers:          %lu (bytes into file)\n",
-         header.e_shoff);
+  printf("  Start of program headers:          %lu (bytes into file)\n", header.e_phoff);
+  printf("  Start of section headers:          %lu (bytes into file)\n", header.e_shoff);
   printf("  Flags:                             0x%x\n", header.e_flags);
   printf("  Size of this header:               %hu (bytes)\n", header.e_ehsize);
-  printf("  Size of program headers:           %hu (bytes)\n",
-         header.e_phentsize);
+  printf("  Size of program headers:           %hu (bytes)\n", header.e_phentsize);
   printf("  Number of program headers:         %hu\n", header.e_phnum);
-  printf("  Size of section headers:           %hu (bytes)\n",
-         header.e_shentsize);
+  printf("  Size of section headers:           %hu (bytes)\n", header.e_shentsize);
   printf("  Number of section headers:         %hu\n", header.e_shnum);
   printf("  Section header string table index: %hu\n", header.e_shstrndx);
 }

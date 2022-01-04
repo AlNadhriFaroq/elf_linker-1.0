@@ -1,12 +1,12 @@
-#include "readElfSecTable.h"
-#include "readElfHeader.h"
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include "readElfSecTable.h"
+#include "readElfHeader.h"
 
 /*
-        find_type: trouve la chaine de caracteres associée à un entier.
+  find_type: trouve la chaine de caracteres associee a un entier.
 */
 void find_type(long num, char *sh_type)
 {
@@ -97,7 +97,7 @@ void revstr(char *str)
 }
 
 /*
-        find_flags:
+  find_flags:
 */
 void find_flags(char *tab, int n)
 {
@@ -135,6 +135,7 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
   printf("sectHdr Headers:\n  [Nr] Name               Type             Address "
          "          Offset\n       Size               EntSize          Flags  "
          "Link  Info  Align\n");
+
   // main loop
   for (int i = 0; i < header.e_shnum; i++)
   {
@@ -143,14 +144,13 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
     // Lecture de la sectHdr de la table du fichier
     fseek(elfFile, header.e_shoff + i * sizeof(sectHdr), SEEK_SET);
     fread(&sectHdr, 1, sizeof(sectHdr), elfFile);
-    //
+	
     find_flags(flags, sectHdr.sh_flags);
     revstr(flags);
-    //
+
     find_type(sectHdr.sh_type, sh_type);
     sh_name = sectNames + sectHdr.sh_name;
 
-    //
     printf("  [%2d] %-18s %-17s %016lx  %08lx\n", i, sh_name, sh_type,
            sectHdr.sh_addr, sectHdr.sh_offset);
 
@@ -158,12 +158,10 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
            sectHdr.sh_entsize, flags, sectHdr.sh_link,
            sectHdr.sh_info, sectHdr.sh_addralign);
   }
-  //
+
   printf("Key to Flags:\n");
-  printf("  W (write), A (alloc), X (execute), M (merge), S (strings), I "
-         "(info),\n");
-  printf("  L (link order), O (extra OS processing required), G (group), T "
-         "(TLS),\n");
+  printf("  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),\n");
+  printf("  L (link order), O (extra OS processing required), G (group), T (TLS),\n");
   printf("  C (compressed), x (unknown), o (OS specific), E (exclude),\n");
   printf("  l (large), p (processor specific)\n");
 

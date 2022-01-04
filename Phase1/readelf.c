@@ -1,7 +1,7 @@
-#include "readElfHeader.h"
-#include "readElfSecTable.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "readElfHeader.h"
+#include "readElfSecTable.h"
 
 int main(int argc, char *argv[]) {
   if (argc < 3) {
@@ -21,9 +21,9 @@ int main(int argc, char *argv[]) {
         header.e_ident[2] == 'L' && header.e_ident[3] == 'F'))
   {
     	printf("readelf: Error: Not an ELF file - it has the wrong magic bytes at the start\n");
+        fclose(elfFile);
     	exit(1);
   }
-
 
   char flag = argv[1][1];
   switch (flag) {
@@ -34,17 +34,17 @@ int main(int argc, char *argv[]) {
     affiche_section_table(elfFile, header);
     break;
   case 'x':
-    printf("contenu de l’une des sections d’un fichier ELF\n");
+    printf("afficher le contenu de l’une des sections d’un fichier ELF\n");
     break;
   case 's':
     printf("afficher la table des symboles d’un fichier ELF\n");
     break;
   case 'r':
-    printf("’afficher les tables de reimplantation d’un fichier ELF pour "
-           "machine ARM\n");
+    printf("afficher les tables de reimplantation d’un fichier ELF pour machine ARM\n");
     break;
   default:
-    printf("unkown falg:try one of the following falgs -h,-S,-r,-x,-s\n");
+    printf("unknown flag: try one of the following flags -h, -S, -r, -x, -s\n");
+    fclose(elfFile);
     exit(1);
   }
   fclose(elfFile);
