@@ -18,8 +18,7 @@ void find_type(long num, char *sh_type)
   case 1:
     strcpy(sh_type, "PROGBITS");
     break;
-  case 2:
-    strcpy(sh_type, "SYMTAB");
+
     break;
   case 3:
     strcpy(sh_type, "STRTAB");

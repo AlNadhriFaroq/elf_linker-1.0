@@ -1,17 +1,16 @@
-CC=gcc
+CC=clang
 CFLAGS= -Wall -Werror
+all:readelf
 
-all: readelf
-
-%.o: %.c
+%.o:%.c
 	$(CC) $(CFLAGS) -c $<
+readElfHeader.o:readElfHeader.h 
+readElfSecTable.o:readElfSecTable.h 
+readElfRel.o:readElfRel.h readElfSecTable.h 
+readElfLecSect.o:readElfHeader.h readElfSecTable.h
 
-readElfHeader.o: readElfHeader.h 
-readElfSecTable.o: readElfSecTable.h 
-
-readelf: readelf.o readElfHeader.o readElfSecTable.o
-	$(CC) $(CFLAGS) -o $@ $^
-
+readelf: readelf.o readElfHeader.o readElfSecTable.o readElfRel.o readElfLecSect.o
+	$(CC) -o $@ $^
 
 clean:
 	rm *.o readelf
