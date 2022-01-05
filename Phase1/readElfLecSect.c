@@ -9,7 +9,7 @@
 #include <string.h>
 
 /* void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sectHdr, int section)
-    
+        Pour la section choisie, affiche son contenu en hexadecimal et l'adresse des octets lus
 */
 void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sectHdr, int section){
 
