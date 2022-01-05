@@ -23,7 +23,7 @@ void find_type(long num, char *sh_type)
 		strcpy(sh_type, "PROGBITS");
 		break;
 	case 2:
-		strcpy(sh_type, "");
+		strcpy(sh_type, "SYMTAB");
 		break;
 	case 3:
 		strcpy(sh_type, "STRTAB");
@@ -150,10 +150,10 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 	fseek(elfFile, sectHdr.sh_offset, SEEK_SET);
 	fread(sectNames, 1, sectHdr.sh_size, elfFile);
 
-	printf("There are %d sectHdr headers, starting at offset 0x%lx:\n\n",
+	printf("There are %d section headers, starting at offset 0x%lx:\n\n",
 		   header.e_shnum, header.e_shoff);
-	printf("sectHdr Headers:\n  [Nr] Name               Type             Address "
-		   "          Offset\n       Size               EntSize          Flags  "
+	printf("Section Headers:\n  [Nr] Name              Type             Address "
+		   "          Offset\n       Size              EntSize          Flags  "
 		   "Link  Info  Align\n");
 
 	// Parcourt de toutes les sections
@@ -172,11 +172,15 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 		// Lecture du type de la section courante
 		find_type(sectHdr.sh_type, sh_type);
 		sh_name = sectNames + sectHdr.sh_name;
+		if(strlen(sh_name) > 16){
+			sh_name[17] = '\0';
+		}
+		
 
 		// Affichage des informations
-		printf("  [%2d] %-18s %-17s %016lx  %08lx\n", i, sh_name, sh_type,
+		printf("  [%2d] %-17s %-17s%016lx  %08lx\n", i, sh_name, sh_type,
 			   sectHdr.sh_addr, sectHdr.sh_offset);
-		printf("       %016lx   %016lx   %-5s %-5d %-5d  %ld\n", sectHdr.sh_size,
+		printf("       %016lx  %016lx  %2s      %2d    %2d     %ld\n", sectHdr.sh_size,
 			   sectHdr.sh_entsize, flags, sectHdr.sh_link,
 			   sectHdr.sh_info, sectHdr.sh_addralign);
 	}

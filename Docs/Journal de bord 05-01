@@ -1,1 +1,10 @@
+Journal de bord 05/01 : 
 
+- Étape 3 complétée et fonctionnelle
+- Étape 4 et 5 en grande avancée, finalisation prévue demain pour l’audit de code
+Notre objectif étant de compléter la phase 1 avant la présentation de demain 15h15.
+
+	Nous avons en parallèle travaillé sur la documentation et les spécifications de toutes les fonctions des étapes 1 à 3 (commentaires, spécifications et mise au propre de certains modules).
+
+	En termes de tests, étant donné que la phase 1 repose sur de la lecture d’informations d’en-tête de fichier ELF, ainsi que des sections qu’il contient, nous ne savons pas vraiment  si un grand nombre de tests est nécessaire.
+	Le code contient déjà une certaine robustesse (choix des arguments et erreurs de types de fichiers). Chaque étape donnant un résultat identique au contenu de la fonction arm-none-eabi-readelf, nous verrons demain à quel point ces tests sont importants pendant l’audition de code.

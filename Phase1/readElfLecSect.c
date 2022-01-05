@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Fichier principal de l'etape 3 : affichage du contenu d'une section choisie */
+
+
 /* void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sectHdr, int section)
         Pour la section choisie, affiche son contenu en hexadecimal et l'adresse des octets lus
 */
@@ -30,7 +33,7 @@ void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sect
         printf("%02x", tab);
 
         // Affichage d'un espace tous les quatre octets
-        if((i+1) % 4 == 0){
+        if((i+1) % 4 == 0 && !((i+1) % 16 == 0)){
             printf(" ");
         }
 
@@ -39,8 +42,10 @@ void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sect
             printf("\n  0x%08lx ", sectHdr.sh_addr + 16 * j);
             j++;
         }
+        
     }
     printf("\n\n");
+    
 }
 
 /* void affichage_section(FILE *elfFile, Elf64_Ehdr header, char *section)
