@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 		affiche_section(elfFile, header, argv[2]);
 		break;
 	case 's':
-		printf("affiche_symbol_table\n");
+		affiche_symboles(elfFile, header);
 		break;
 	case 'r':
 		affiche_reimplantation_table(elfFile, header);
