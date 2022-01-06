@@ -7,8 +7,7 @@
 
 /* Fichier principal de l'etape 2 : affichage de la table des sections */
 
-/*
-	find_type(long num, char *sh_type)
+/*	find_type(long num, char *sh_type)
 		Lit la valeur donnee dans le premier parametre afin de definir la valeur du second
 */
 void find_type(long num, char *sh_type)
@@ -88,8 +87,7 @@ void find_type(long num, char *sh_type)
 	}
 }
 
-/*
-	revstr(char *str)
+/*	revstr(char *str)
 		Prend une chaine de caracteres et modifie sa valeur en l'inversant
 		utilisee pour faire la transition big Endian / little Endian
 */
@@ -105,8 +103,7 @@ void revstr(char *str)
 	}
 }
 
-/*
-	find_flags(char *tab, int n)
+/*	find_flags(char *tab, int n)
 		Traduction des actions effectuees en flags pour une section
 */
 void find_flags(char *tab, int n)
@@ -128,8 +125,7 @@ void find_flags(char *tab, int n)
 	tab[j] = '\0';
 }
 
-/*
-	affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
+/*	affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 		Affichage de la table des sections et des informations pour chaque section
 */
 void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
@@ -175,7 +171,6 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 		if(strlen(sh_name) > 16){
 			sh_name[17] = '\0';
 		}
-		
 
 		// Affichage des informations
 		printf("  [%2d] %-17s %-17s%016lx  %08lx\n", i, sh_name, sh_type,

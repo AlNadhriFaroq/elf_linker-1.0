@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 		affiche_section_table(elfFile, header);
 		break;
 	case 'x':
-		affichage_section(elfFile, header, argv[2]);
+		affiche_section(elfFile, header, argv[2]);
 		break;
 	case 's':
 		printf("affiche_symbol_table\n");
