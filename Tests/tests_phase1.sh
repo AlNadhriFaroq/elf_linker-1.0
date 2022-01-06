@@ -36,16 +36,32 @@ let nb_sec=$(head -n 1 resultat_fourni.txt | cut -d " " -f 3)-1
 echo "TEST AFFICHAGE SECTIONS :"
 for num in $(seq 0 $nb_sec)
 do
-	# Test l'affichage d'une section
+	# Recuperation des resultats dans deux fichiers
 	./readelf -x $num $1 > resultat_projet.txt
 	arm-none-eabi-readelf -x $num $1 | cut -d " " -f 1-7 > resultat_fourni.txt
-	diff -w -b -B resultat_projet.txt resultat_fourni.txt > /dev/null
+
+	# Mise en forme du cas ou la section est vide conformement a notre resultat
+	no_dump=$(cut -d " " -f 3-7 resultat_fourni.txt)
+	# Si la section est bien vide, alors on modifie
+	if [[ "$no_dump" == "has no data to dump." ]]
+	then
+    	nom_section=$(cut -d " " -f 2 resultat_fourni.txt)
+    	echo "" > resultat_fourni.txt
+    	echo "Hex dump of section $nom_section:" >> resultat_fourni.txt
+    	echo "  0x00000000" >> resultat_fourni.txt
+	fi
+	
+	# Mise en forme du cas ou une note est presente dans le resultat "officiel" de readelf, et suppression de la note
+	grep -v " NOTE:" resultat_fourni.txt > resultat_fourni_grep.txt
+
+	# Test l'affichage d'une section
+	diff -w -b -B resultat_projet.txt resultat_fourni_grep.txt > /dev/null
 	if [[ $? -eq 0 ]]
 	then
 		echo "    Test affichage section $num : Identique"
 	else
 		echo "    Test affichage section $num : Different"
-		diff -w -b -B --suppress-common-lines resultat_projet.txt resultat_fourni.txt
+		diff -w -b -B --suppress-common-lines resultat_projet.txt resultat_fourni_grep.txt
 		echo ""
 	fi
 done
@@ -77,6 +93,6 @@ else
 fi
 echo ""
 
-rm resultat_projet.txt resultat_fourni.txt
+rm resultat_projet.txt resultat_fourni.txt resultat_fourni_grep.txt
 make clean > /dev/null
 cd ../Tests
