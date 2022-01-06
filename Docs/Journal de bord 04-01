@@ -16,11 +16,12 @@ Lecture de documentation et compréhension des spécificités des étapes 1 à 6
 
 Dans un premier temps nous avons divisé les premières étapes du projet individuellement afin d’avoir un « spécialiste » par étape qui aura déjà compris ce qu’on attend en terme de fonctionnalités, et commencé la conception du code. En fonction des capacités de chacun, ceux ayant le plus de facilités en C ont donc pris les premières étapes tandis que ceux rencontrant plus de difficultés ont compilé une documentation préparant les étapes suivantes.
 
-03/10 : Reprise du projet en groupe et réalisation de l’étape 1 par Faroq
-04/10 : Mise en commun des travaux de chaque personne, étape 2 finalisée par Faroq, étape 3, 4, 5 et 6 en cours de réalisation.
-Étape 3 : Raphaël, Sacha, suivi du reste du groupe
-Étape 4 : Dorian et Mathias, suivi du reste du groupe
-Étape 5 : Landry (après avoir fini l’étape 1)
-Étape 6 : Faroq (après avoir fini l’étape 1 et 2)
+
+03/10 : Reprise du projet en groupe et réalisation de l’étape 1 par Faroq
+04/10 : Mise en commun des travaux de chaque personne, étape 2 finalisée par Faroq, étape 3, 4, 5 et 6 en cours de réalisation.
+Étape 3 : Raphaël, Sacha, suivi du reste du groupe
+Étape 4 : Dorian et Mathias, suivi du reste du groupe
+Étape 5 : Landry (après avoir fini l’étape 1)
+Étape 6 : Faroq (après avoir fini l’étape 1 et 2)
 
 Notre prochain objectif est de finaliser la conception des étapes 1 à 5 avant l’audition de code (voire l’étape 6 en fonction de l’avancement), puis de revenir sur ces étapes post-audition pour créer les tests et les documents annexes et finaliser la Phase 1, avant de passer à la phase 2.
