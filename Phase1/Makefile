@@ -8,10 +8,10 @@ all: readelf
 
 readElfHeader.o: readElfHeader.h 
 readElfSecTable.o: readElfSecTable.h 
-readElfRel.o: readElfRel.h readElfSecTable.h 
 readElfLecSect.o: readElfHeader.h readElfSecTable.h
+readElfRel.o: readElfRel.h readElfSecTable.h 
 
-readelf: readelf.o readElfHeader.o readElfSecTable.o readElfRel.o readElfLecSect.o
+readelf: readelf.o readElfHeader.o readElfSecTable.o readElfLecSect.o readElfRel.o
 	$(CC) -o $@ $^
 
 clean:
