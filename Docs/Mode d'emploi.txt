@@ -1,14 +1,15 @@
 Mode d'emploi de l'utilisation du projet de lecture de fichiers ELF :
 
 Phase 1 : 
-* Se placer dans le dossier Phase1 ( cd Phase1)
+* Se placer dans le dossier Phase1 (cd Phase1)
 * Compilation avec le MakeFile (make)
 * Execution du projet (./readelf <option> <nomFichier>)
-        nomFichier étant soit un executable (ici readelf), soit un fichier .o (readelf.o, ou readElfHeader.o).
+        nomFichier etant soit un executable (ici readelf), soit un fichier .o (readelf.o ou readElfHeader.o).
 
-Une fonction help est disponible pour choisir l'option adéquate (./readelf help)
-Cette fonction est également disponible en cas de mauvaise manipulation (par exemple -u qui n'existe pas)
+Une fonction d'aide est disponible pour choisir l'option adequate (./readelf -H)
+Cette fonction est egalement disponible en cas de mauvaise manipulation (par exemple -u qui n'existe pas)
 
+Liste des options :
   -a                 Equivalent to: -h -S -s -r
   -h                 Display the ELF file header                            (ETAPE 1)
   -S                 Display the sections' header                           (ETAPE 2)
@@ -17,9 +18,9 @@ Cette fonction est également disponible en cas de mauvaise manipulation (par ex
   -x <number|name>   Dump the contents of section <number|name> as bytes    (ETAPE 3)
   -H                 Display this information
 
-Exemple de lancement du programme pour l'étape 1, 2, 4 ou 5 : 
+Exemple de lancement du programme pour les etapes 1, 2, 4 ou 5 : 
 ./readelf -h readelf.o
 
-Exemple de lancement du programme pour l'étape 3 : 
+Exemple de lancement du programme pour l'etape 3 : 
 ./readelf -x 8 readelf.o
 ./readelf -x .text readelf.o

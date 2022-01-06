@@ -5,9 +5,8 @@
 
 /* Fichier principal de l'etape 1 : affichage de l'en-tete */
 
-/*
-	affiche_header(Elf64_Ehdr)
-		affichage des informations de la structure entree en parametre
+/*	affiche_header(Elf64_Ehdr)
+		Affichage des informations de la structure entree en parametre
 */
 void affiche_header(Elf64_Ehdr header)
 {
