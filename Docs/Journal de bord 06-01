@@ -1,0 +1,22 @@
+Journal de bord 06/01 : 
+
+- Avancement sur les étapes 4 et 6
+- Passage à l'audit de code, nouveaux conseils/problèmes à résoudre
+- Conception des tests finalisée pour les étapes 1 à 3
+
+    Nous avons trouvé les problèmes sur l'étape 4, et sa réalisation a continué sa progression.
+    Durant l'audit de code, l'enseignant nous a pointé plusieurs problèmes qui vont nous ralentir dans la suite du projet :
+        * Séparation de la partie lecture et écriture dans chaque étape (bien que cela ne soit pas nécessaire pour la Phase 1).
+        * Prise en compte du BIG ENDIAN pour la suite, puisque le projet se base sur des exemples en ARM 32 bits en BIG ENDIAN.
+        * Eventuellement, prendre en compte les options de readelf selon la norme UNIX, mais des modules sont déjà disponibles dans des exemples
+    
+    Nos nouveaux objectifs sont donc : 
+    - Dorian et Sacha : documentation, tests et retour sur les anciennes parties fonctionnelles pour mettre à jour.
+    - Faroq et Landry : Finalisation de l'étape 4, 5 et 6 (puisque leur avancement est déja conséquent)
+    - Raphaël : gestion des options suivant la norme UNIX
+    - Mathias : Début de l'étape 7 et préparation du terrain pour le reste du groupe
+
+    Au niveau des tests, nous avons automatisé les tests pour la phase 1, et nous avons rendu fonctionnels les tests des étapes 
+    1 à 3. Ces tests font une comparaison entre les résultats de nos programmes et ceux de la fonction référence.
+    
+    
