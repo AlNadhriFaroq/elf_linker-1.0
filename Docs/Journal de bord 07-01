@@ -1,0 +1,22 @@
+Journal de bord 07/01 : 
+
+- Finalisation de l’étape 4
+- Ajout des options respectant la norme UNIX
+- Retour sur la séparation Lecture/écriture des précédentes étapes
+- Avancement sur l’étape 6
+- Documents annexes générés
+
+    * Landry a finalement résolu les problèmes portant sur l’étape 4, et celle-ci fonctionne désormais correctement. 
+    Il ne reste donc qu'à ajouter les tests et la documentation sur cette partie pour l'achever.
+	* Sacha a résolu le problème des options de notre programme. Il est désormais possible d’utiliser notre projet comme 
+    une commande UNIX fonctionnelle. La documentation et les tests sur ce module du projet ont également été réalisés, cette partie est donc achevée.
+	* L’étape 4 ayant pris plus de temps que prévu, la séparation Lecture/écriture et la gestion du boutisme sont en cours de développement dans les étapes 2 et 3.
+	* Faroq a continué le développement de l’étape 6 en parallèle, avec les conseils de l’audit de code d’hier.
+	* L’étape 7 commence à prendre forme, Raphaël ayant rejoint Mathias dans cette étape.
+
+    Nos objectifs du week-end sont donc :  
+    - Dorian et Sacha : Documentation et tests des étapes 4, 5 et 6 lorsqu’elles seront finies, séparation de Lecture/écriture sur l’étape 3 
+    - Landry : Finalisation de l’étape 5, séparation de Lecture/écriture sur l’étape 2
+    - Faroq : Finalisation de l’étape 6, et éventuellement travail sur l’étape 7
+    - Mathias et Raphaël : Travail sur l'étape 7 et préparation du terrain pour le reste du groupe
+

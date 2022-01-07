@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 {
 	// Lecture et interpretation des options entrees
 	options Opt = read_options(argc, argv);
+	liste_sections liste_sec;
 
 	// Parcours des fichiers a afficher
 	for (int i = 0 ; i < Opt.nb_file ; i++)
@@ -41,24 +42,25 @@ int main(int argc, char *argv[])
 				exit(1);
 			}
 
+			liste_sec = lecture_section_table(elfFile, header);
 			// Execution des fonctions correspondants aux options entrees en parametre
 			if (Opt.h)
 			{
 				affiche_header(header);
 			}
-			if (Opt.S)
+			else if (Opt.S)
 			{
-				affiche_section_table(elfFile, header);
+				affiche_section_table(liste_sec, header.e_shoff);
 			}
-			if (Opt.s)
+			else if (Opt.s)
 			{
 				affiche_symboles(elfFile, header);
 			}
-			if (Opt.r)
+			else if (Opt.r)
 			{
 				affiche_reimplantation_table(elfFile, header);
 			}
-			if (Opt.nb_sec > 0)
+			else if (Opt.nb_sec > 0)
 			{
 				// Parcours des sections a afficher
 				for (int s = 0 ; s < Opt.nb_sec ; s++)

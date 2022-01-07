@@ -125,15 +125,16 @@ void find_flags(char *tab, int n)
 	tab[j] = '\0';
 }
 
-/*	affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
-		Affichage de la table des sections et des informations pour chaque section
+/*	lecture_section_table(FILE *elfFile, Elf64_Ehdr header)
+		Lit la table
 */
-void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
-{
+liste_sections lecture_section_table(FILE *elfFile, Elf64_Ehdr header){
+	liste_sections liste;
 	char flags[6] = "";
 	Elf64_Shdr sectHdr;
 	char *sectNames = NULL;
 	char sh_type[25] = "";
+
 
 	// Placement du curseur au debut de la premiere section
 	fseek(elfFile, header.e_shoff + header.e_shstrndx * header.e_shentsize, SEEK_SET);
@@ -146,38 +147,60 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 	fseek(elfFile, sectHdr.sh_offset, SEEK_SET);
 	fread(sectNames, 1, sectHdr.sh_size, elfFile);
 
-	printf("There are %d section headers, starting at offset 0x%lx:\n\n",
-		   header.e_shnum, header.e_shoff);
+	// Parcours de toutes les sections
+	
+	liste.nb_sections = header.e_shnum;
+	liste.tab = malloc(sizeof(section) * header.e_shnum);
+
+	for (int i = 0; i < header.e_shnum; i++)
+	{
+		char *sh_name = "";
+		// Lecture de l'en-tete de la section courante
+		fseek(elfFile, header.e_shoff + i * sizeof(liste.tab[i].sec), SEEK_SET);
+		fread(&liste.tab[i].sec, 1, sizeof(liste.tab[i].sec), elfFile);
+
+		// Allocation memoire des donnees de la taille de la section definie par tab[i]
+		liste.tab[i].tabDonnee = malloc(liste.tab[i].sec.sh_size);
+
+		// Lecture des flags la section courante
+		find_flags(flags, liste.tab[i].sec.sh_flags);
+		revstr(flags);
+		
+		strcpy(liste.tab[i].flag, flags);
+
+		// Lecture du type de la section courante
+		find_type(liste.tab[i].sec.sh_type, sh_type);
+		sh_name = sectNames + liste.tab[i].sec.sh_name;
+		if(strlen(sh_name) > 16){
+			sh_name[17] = '\0';
+		}
+		strcpy(liste.tab[i].name, sh_name);
+		strcpy(liste.tab[i].type, sh_type);
+	}
+
+
+	free(sectNames);
+	return liste;
+}
+
+/*	affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
+		Affichage de la table des sections et des informations pour chaque section
+*/
+void affiche_section_table(liste_sections liste, uint64_t offset){
+
+	printf("There are %ld section headers, starting at offset 0x%lx:\n\n",
+		   liste.nb_sections, offset);
 	printf("Section Headers:\n  [Nr] Name              Type             Address "
 		   "          Offset\n       Size              EntSize          Flags  "
 		   "Link  Info  Align\n");
 
-	// Parcourt de toutes les sections
-	for (int i = 0; i < header.e_shnum; i++)
-	{
-		char *sh_name = "";
+	for (int i = 0; i < liste.nb_sections; i++){
 
-		// Lecture de l'en-tete de la section courante
-		fseek(elfFile, header.e_shoff + i * sizeof(sectHdr), SEEK_SET);
-		fread(&sectHdr, 1, sizeof(sectHdr), elfFile);
-
-		// Lecture des flags la section courante
-		find_flags(flags, sectHdr.sh_flags);
-		revstr(flags);
-
-		// Lecture du type de la section courante
-		find_type(sectHdr.sh_type, sh_type);
-		sh_name = sectNames + sectHdr.sh_name;
-		if(strlen(sh_name) > 16){
-			sh_name[17] = '\0';
-		}
-
-		// Affichage des informations
-		printf("  [%2d] %-17s %-17s%016lx  %08lx\n", i, sh_name, sh_type,
-			   sectHdr.sh_addr, sectHdr.sh_offset);
-		printf("       %016lx  %016lx  %2s      %2d    %2d     %ld\n", sectHdr.sh_size,
-			   sectHdr.sh_entsize, flags, sectHdr.sh_link,
-			   sectHdr.sh_info, sectHdr.sh_addralign);
+		printf("  [%2d] %-17s %-17s%016lx  %08lx\n", i, liste.tab[i].name, liste.tab[i].type,
+			   liste.tab[i].sec.sh_addr, liste.tab[i].sec.sh_offset);
+		printf("       %016lx  %016lx  %2s      %2d    %2d     %ld\n", liste.tab[i].sec.sh_size,
+			   liste.tab[i].sec.sh_entsize, liste.tab[i].flag, liste.tab[i].sec.sh_link,
+			   liste.tab[i].sec.sh_info, liste.tab[i].sec.sh_addralign);
 	}
 
 	/* En termes de flags, certains n'étaient pas présents dans la documentation.
@@ -188,6 +211,4 @@ void affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 	printf("  L (link order), O (extra OS processing required), G (group), T (TLS),\n");
 	printf("  C (compressed), x (unknown), o (OS specific), E (exclude),\n");
 	printf("  l (large), p (processor specific)\n");
-
-	free(sectNames);
 }
