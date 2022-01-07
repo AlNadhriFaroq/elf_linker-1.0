@@ -36,22 +36,21 @@ let nb_sec=$(head -n 1 resultat_fourni.txt | cut -d " " -f 3)-1
 echo "TEST AFFICHAGE SECTIONS :"
 for num in $(seq 0 $nb_sec)
 do
-	# Recuperation des resultats dans deux fichiers
 	./readelf -x $num $1 > resultat_projet.txt
 	arm-none-eabi-readelf -x $num $1 | cut -d " " -f 1-7 > resultat_fourni.txt
 
 	# Mise en forme du cas ou la section est vide conformement a notre resultat
 	no_dump=$(cut -d " " -f 3-7 resultat_fourni.txt)
-	# Si la section est bien vide, alors on modifie
 	if [[ "$no_dump" == "has no data to dump." ]]
 	then
-    	nom_section=$(cut -d " " -f 2 resultat_fourni.txt)
-    	echo "" > resultat_fourni.txt
-    	echo "Hex dump of section $nom_section:" >> resultat_fourni.txt
-    	echo "  0x00000000" >> resultat_fourni.txt
+		# Si la section est bien vide, alors on modifie
+		nom_section=$(cut -d " " -f 2 resultat_fourni.txt)
+		echo "" > resultat_fourni.txt
+		echo "Hex dump of section $nom_section:" >> resultat_fourni.txt
+		echo "  0x00000000" >> resultat_fourni.txt
 	fi
-	
-	# Mise en forme du cas ou une note est presente dans le resultat "officiel" de readelf, et suppression de la note
+
+	# Mise en forme du cas ou une note est presente dans le resultat fourni et suppression de la note
 	grep -v " NOTE:" resultat_fourni.txt > resultat_fourni_grep.txt
 
 	# Test l'affichage d'une section
