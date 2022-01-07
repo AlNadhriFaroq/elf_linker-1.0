@@ -3,41 +3,18 @@
 #include "readElfHeader.h"
 #include "readElfSecTable.h"
 #include "readElfLecSect.h"
+#include "readElfSym.h"
 #include "readElfRel.h"
-
-void help()
-{
-	printf("Usage: readelf <option> elf-file(s)\n");
-	printf(" Display information about the contents of ELF format files\n");
-	printf(" Options are:\n");
-	printf("  -a                 Equivalent to: -h -S -s -r\n");
-	printf("  -h                 Display the ELF file header\n");
-	printf("  -S                 Display the sections' header\n");
-	printf("  -s                 Display the symbol table\n");
-	printf("  -r                 Display the relocations (if present)\n");
-	printf("  -x <number|name>   Dump the contents of section <number|name> as bytes\n");
-	printf("  -H                 Display this information\n");
-	exit(1);
-}
+#include "options.h"
 
 int main(int argc, char *argv[])
 {
+	// Lecture des options entrees
+	options Opt = read_options(argc, argv);
+
+	// Ouverture du premier fichier
 	FILE *elfFile;
-
-	// Ouverture du fichier ELF en fonction des parametres entrees
-	if (argc == 3 && argv[1][1] != 'x' && argv[1][2] == '\0')
-	{
-		elfFile = fopen(argv[2], "rb");
-	}
-	else if (argc == 4 && argv[1][1] == 'x' && argv[1][2] == '\0')
-	{
-		elfFile = fopen(argv[3], "rb");
-	}
-	else
-	{
-		help();
-	}
-
+	elfFile = fopen(Opt.fileList[0], "rb");
 	if (elfFile == NULL)
 	{
 		printf("readelf: Error: File open error!\n");
@@ -57,34 +34,29 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	// Execution de la fonction correspondant a l'option entree en parametre
-	switch (argv[1][1])
+	// Execution des fonctions correspondantes aux options entrees en parametre
+	if (Opt.h)
 	{
-	case 'a':
 		affiche_header(header);
+	}
+	if (Opt.S)
+	{
 		affiche_section_table(elfFile, header);
-		printf("affiche_symbol_table\n");
-		affiche_reimplantation_table(elfFile, header);
-		break;
-	case 'h':
-		affiche_header(header);
-		break;
-	case 'S':
-		affiche_section_table(elfFile, header);
-		break;
-	case 'x':
-		affiche_section(elfFile, header, argv[2]);
-		break;
-	case 's':
+	}
+	if (Opt.s)
+	{
 		affiche_symboles(elfFile, header);
-		break;
-	case 'r':
+	}
+	if (Opt.r)
+	{
 		affiche_reimplantation_table(elfFile, header);
-		break;
-	default:
-		fclose(elfFile);
-		printf("readelf: Error: Unknown flag %s\n", argv[1]);
-		help();
+	}
+	if (Opt.nb_sec > 0)
+	{
+		for (int i = 0 ; i < Opt.nb_sec ; i++)
+		{
+			affiche_section(elfFile, header, Opt.secList[i]);
+		}
 	}
 
 	fclose(elfFile);
