@@ -8,7 +8,7 @@
 /*	affiche_header(Elf64_Ehdr)
 		Affichage des informations de la structure entree en parametre
 */
-void affiche_header(Elf64_Ehdr header)
+void affiche_header(Elf32_Ehdr header)
 {
 	// variables en texte pur, non recuperees dans le header
 	char class[15] = "";
@@ -96,14 +96,14 @@ void affiche_header(Elf64_Ehdr header)
 	printf("  Type:                              %s\n", type);
 	printf("  Machine:                           Advanced Micro Devices X86-64\n");
 	printf("  Version:                           0x%x\n", header.e_version);
-	printf("  Entry point address:               0x%lx\n", header.e_entry);
-	printf("  Start of program headers:          %lu (bytes into file)\n", header.e_phoff);
-	printf("  Start of section headers:          %lu (bytes into file)\n", header.e_shoff);
+	printf("  Entry point address:               0x%x\n", header.e_entry);
+	printf("  Start of program headers:          %d (bytes into file)\n", header.e_phoff);
+	printf("  Start of section headers:          %d (bytes into file)\n", header.e_shoff);
 	printf("  Flags:                             0x%x\n", header.e_flags);
-	printf("  Size of this header:               %hu (bytes)\n", header.e_ehsize);
-	printf("  Size of program headers:           %hu (bytes)\n", header.e_phentsize);
-	printf("  Number of program headers:         %hu\n", header.e_phnum);
-	printf("  Size of section headers:           %hu (bytes)\n", header.e_shentsize);
-	printf("  Number of section headers:         %hu\n", header.e_shnum);
-	printf("  Section header string table index: %hu\n", header.e_shstrndx);
+	printf("  Size of this header:               %d (bytes)\n", header.e_ehsize);
+	printf("  Size of program headers:           %d (bytes)\n", header.e_phentsize);
+	printf("  Number of program headers:         %d\n", header.e_phnum);
+	printf("  Size of section headers:           %d (bytes)\n", header.e_shentsize);
+	printf("  Number of section headers:         %d\n", header.e_shnum);
+	printf("  Section header string table index: %d\n", header.e_shstrndx);
 }

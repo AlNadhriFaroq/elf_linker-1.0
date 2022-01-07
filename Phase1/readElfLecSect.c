@@ -13,7 +13,7 @@
 /*	affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sectHdr, int section)
 		Pour la section choisie, affiche son contenu en hexadecimal et l'adresse des octets lus
 */
-void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sectHdr, int section)
+void affichage_section_contenu(FILE *elfFile, Elf32_Ehdr header, Elf32_Shdr sectHdr, int section)
 {
 	// tab est la variable lecteur de l'octet courant
 	uint8_t tab;
@@ -23,7 +23,7 @@ void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sect
 	fseek(elfFile, sectHdr.sh_offset, SEEK_SET);
 
 	// Affichage de l'adresse du debut du contenu de la section
-	printf("  0x%08lx ", sectHdr.sh_addr);
+	printf("  0x%08x ", sectHdr.sh_addr);
 
 	// Parcours des octets du contenu de la section
 	for(int i = 0; i < sectHdr.sh_size; i++)
@@ -41,7 +41,7 @@ void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sect
 		// Affichage d'un saut de ligne tous les 16 octets et de l'adresse de l'octet courant
 		if (((i+1) % 16 == 0) && (i+1 != sectHdr.sh_size))
 		{
-			printf("\n  0x%08lx ", sectHdr.sh_addr + 16 * j);
+			printf("\n  0x%08x ", sectHdr.sh_addr + 16 * j);
 			j++;
 		}
 	}
@@ -51,10 +51,10 @@ void affichage_section_contenu(FILE *elfFile, Elf64_Ehdr header, Elf64_Shdr sect
 /*	affiche_section(FILE *elfFile, Elf64_Ehdr header, char *section)
 		Fonction d'affichage d'une section en fonction des parametres donnes par l'utilisateur
 */
-void affiche_section(FILE *elfFile, Elf64_Ehdr header, char *section)
+void affiche_section(FILE *elfFile, Elf32_Ehdr header, char *section)
 {
 	int number = 1, i = 0, sec;
-	Elf64_Shdr sectHdr;
+	Elf32_Shdr sectHdr;
 	char *sectNames = NULL;
 	char *sh_name = "";
 

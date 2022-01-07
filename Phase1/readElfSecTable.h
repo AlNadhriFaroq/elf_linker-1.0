@@ -5,18 +5,19 @@
 #include "readElfHeader.h"
 
 // Documentation chapitre 1-10 Figure 1-8
-typedef struct {
+typedef struct
+{
 	uint32_t sh_name;
 	uint32_t sh_type;
-	uint64_t sh_flags;
-	uint64_t sh_addr;
-	uint64_t sh_offset;
-	uint64_t sh_size;
+	uint32_t sh_flags;
+	uint32_t sh_addr;
+	uint32_t sh_offset;
+	uint32_t sh_size;
 	uint32_t sh_link;
 	uint32_t sh_info;
-	uint64_t sh_addralign;
-	uint64_t sh_entsize;
-} Elf64_Shdr;
+	uint32_t sh_addralign;
+	uint32_t sh_entsize;
+} Elf32_Shdr;
 
 // Structure utilisee pour recapituler le contenu d'une section, en y ajoutant le nom, le type et les flags
 // Utilisee pour l'etape 2, puis l'etape 3 et 4
@@ -25,13 +26,13 @@ typedef struct{
 	char type[25];
 	char flag[6];
 	uint8_t *tabDonnee;
-	Elf64_Shdr sec;
+	Elf32_Shdr sec;
 }section;
 
 // Structure utilisee pour generer une liste des sections a partir de la struct section
 // Utilisee pour l'etape 2, puis 3 et 4
 typedef struct{
-	uint64_t nb_sections;
+	uint32_t nb_sections;
 	section *tab;
 }liste_sections;
 
@@ -74,7 +75,7 @@ void find_flags(char *tab, int n);
                  des informations sur chacune d'entre elles
  * effet de bord : aucun
  **********************************************************/
-void affiche_section_table(liste_sections liste, uint64_t offset);
+void affiche_section_table(liste_sections liste, uint32_t offset);
 
 /**********************************************************
  * lecture_section_table
@@ -84,7 +85,7 @@ void affiche_section_table(liste_sections liste, uint64_t offset);
                  des informations sur chacune d'entre elles
  * effet de bord : aucun
  **********************************************************/
-liste_sections lecture_section_table(FILE *elfFile, Elf64_Ehdr header);
+liste_sections lecture_section_table(FILE *elfFile, Elf32_Ehdr header);
 
 //void lecture_donnees_section(FILE *elfFile, Elf64_Ehdr header, liste_sections liste);
 

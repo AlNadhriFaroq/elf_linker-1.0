@@ -128,10 +128,10 @@ void find_flags(char *tab, int n)
 /*	lecture_section_table(FILE *elfFile, Elf64_Ehdr header)
 		Lit la table
 */
-liste_sections lecture_section_table(FILE *elfFile, Elf64_Ehdr header){
+liste_sections lecture_section_table(FILE *elfFile, Elf32_Ehdr header){
 	liste_sections liste;
 	char flags[6] = "";
-	Elf64_Shdr sectHdr;
+	Elf32_Shdr sectHdr;
 	char *sectNames = NULL;
 	char sh_type[25] = "";
 
@@ -186,19 +186,17 @@ liste_sections lecture_section_table(FILE *elfFile, Elf64_Ehdr header){
 /*	affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
 		Affichage de la table des sections et des informations pour chaque section
 */
-void affiche_section_table(liste_sections liste, uint64_t offset){
+void affiche_section_table(liste_sections liste, uint32_t offset){
 
-	printf("There are %ld section headers, starting at offset 0x%lx:\n\n",
+	printf("There are %d section headers, starting at offset 0x%x:\n\n",
 		   liste.nb_sections, offset);
-	printf("Section Headers:\n  [Nr] Name              Type             Address "
-		   "          Offset\n       Size              EntSize          Flags  "
-		   "Link  Info  Align\n");
+	printf("Section Headers:\n  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n");
 
 	for (int i = 0; i < liste.nb_sections; i++){
 
-		printf("  [%2d] %-17s %-17s%016lx  %08lx\n", i, liste.tab[i].name, liste.tab[i].type,
+		printf("  [%2d] %-17s %-15s %08x %06x ", i, liste.tab[i].name, liste.tab[i].type,
 			   liste.tab[i].sec.sh_addr, liste.tab[i].sec.sh_offset);
-		printf("       %016lx  %016lx  %2s      %2d    %2d     %ld\n", liste.tab[i].sec.sh_size,
+		printf("%06x %02x %2s %2d  %2d %2d\n", liste.tab[i].sec.sh_size,
 			   liste.tab[i].sec.sh_entsize, liste.tab[i].flag, liste.tab[i].sec.sh_link,
 			   liste.tab[i].sec.sh_info, liste.tab[i].sec.sh_addralign);
 	}

@@ -23,14 +23,14 @@ int main(int argc, char *argv[])
 		// Cas ou le fichier presente une erreur
 		if (elfFile == NULL)
 		{
-			printf("readelf: ERROR: « %s »: File open error!\n", Opt.fileList[i]);
+			printf("readelf: ERROR: «%s»: File open error!\n", Opt.fileList[i]);
 		}
 		
 		// Cas ou le fichier s'est ouvert normalement
 		else
 		{
 			// Lecture de l'entete du fichier
-			Elf64_Ehdr header;
+			Elf32_Ehdr header;
 			fread(&header, 1, sizeof(header), elfFile); 
 
 			// Verification que le fichier lu est bien un fichier ELF

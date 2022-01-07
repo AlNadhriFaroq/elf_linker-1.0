@@ -48,23 +48,23 @@ void find_type_sym(uint32_t value, char *type)
 }
 
 
-void affichage_dynsym(FILE *elfFile, uint64_t offset, uint64_t entrees, uint64_t taille_entree)
+void affichage_dynsym(FILE *elfFile, uint32_t offset, uint32_t entrees, uint32_t taille_entree)
 {
 	fseek(elfFile, offset, SEEK_SET);
-	Elf64_Sym sym;
+	Elf32_Sym sym;
 	printf("   Num:	Value		  Size Type	Bind   Vis	  Ndx Name\n");
 	for (int i = 0; i < entrees; i++)
 	{
 		fread(&sym, 1, sizeof(sym), elfFile);
-		printf("	%d:   %016lx	 %lu	   %d	   %d		%lu \n", i, sym.st_value, sym.st_size, ELF32_ST_TYPE(sym.st_info), ELF32_ST_BIND(sym.st_info), sym.st_name);
+		printf("	%d:   %08x	 %d	   %d	   %d		%d \n", i, sym.st_value, sym.st_size, ELF32_ST_TYPE(sym.st_info), ELF32_ST_BIND(sym.st_info), sym.st_name);
 	}
 }
 
 
-void affichage_symtab(FILE *elfFile, uint64_t offset, uint64_t entrees, uint64_t taille_entree)
+void affichage_symtab(FILE *elfFile, uint32_t offset, uint32_t entrees, uint32_t taille_entree)
 {
 	assert(fseek(elfFile, offset, SEEK_SET) == 0);
-	printf("l'adresse de la table des symboles est %lx\n", offset);
+	printf("l'adresse de la table des symboles est %x\n", offset);
 	Elf32_Sym sym;
 	int tmp;
 	printf("   Num:	Value			   Size	 Type	Bind	   Ndx Name\n");
@@ -92,9 +92,9 @@ TYPE_SYMB find_type_symbole(long num)
 	}
 }
 
-void affiche_symboles(FILE *elfFile, Elf64_Ehdr header)
+void affiche_symboles(FILE *elfFile, Elf32_Ehdr header)
 {
-	Elf64_Shdr sectHdr;
+	Elf32_Shdr sectHdr;
 	char *sectNames = NULL;
 
 	fseek(elfFile, header.e_shoff + header.e_shstrndx * header.e_shentsize, SEEK_SET);
@@ -117,15 +117,15 @@ void affiche_symboles(FILE *elfFile, Elf64_Ehdr header)
 
 		if (find_type_symbole(sectHdr.sh_type) == DYNSYM)
 		{
-			uint64_t entrees =  (sectHdr.sh_size / sectHdr.sh_entsize);
-			printf("Symbol table '%s' contains %lu entries:\n", sh_name, entrees);
+			uint32_t entrees =  (sectHdr.sh_size / sectHdr.sh_entsize);
+			printf("Symbol table '%s' contains %d entries:\n", sh_name, entrees);
 			affichage_dynsym(elfFile, sectHdr.sh_offset, entrees, sectHdr.sh_entsize);
 			printf("\n");
 		}
 		else if (find_type_symbole(sectHdr.sh_type) == SYMTAB)
 		{
-			uint64_t entrees =  (sectHdr.sh_size / sectHdr.sh_entsize);
-			printf("Symbol table '%s' contains %lu entries:\n", sh_name, entrees);
+			uint32_t entrees =  (sectHdr.sh_size / sectHdr.sh_entsize);
+			printf("Symbol table '%s' contains %d entries:\n", sh_name, entrees);
 			affichage_symtab(elfFile, sectHdr.sh_offset, entrees, sectHdr.sh_entsize);
 			printf("\n");
 		}

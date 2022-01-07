@@ -50,10 +50,10 @@ typedef struct {
 
 TYPE_SYMB find_type_symbole(long num);
 
-void affiche_symboles(FILE *elfFile, Elf64_Ehdr header);
+void affiche_symboles(FILE *elfFile, Elf32_Ehdr header);
 
-void affichage_dynsym(FILE *elfFile, uint64_t offset, uint64_t entrees, uint64_t taille_entree);
+void affichage_dynsym(FILE *elfFile, uint32_t offset, uint32_t entrees, uint32_t taille_entree);
 
-void affichage_symtab(FILE *elfFile, uint64_t offset, uint64_t entrees, uint64_t taille_entree);
+void affichage_symtab(FILE *elfFile, uint32_t offset, uint32_t entrees, uint32_t taille_entree);
 
 #endif

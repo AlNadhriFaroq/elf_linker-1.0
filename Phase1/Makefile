@@ -1,4 +1,4 @@
-CC=gcc
+CC=gcc -m32
 CFLAGS= -Wall -Werror -g
 
 all: readelf

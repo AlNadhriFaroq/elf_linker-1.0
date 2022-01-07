@@ -37,12 +37,12 @@ typedef struct {
 	uint64_t r_addend; // Elf64_Sxword
 } Elf64_Rela;
 
-TYPE find_type_reimplatation(long num);
+TYPE find_type_reimplatation(int num);
 
-void affiche_reimplantation_table(FILE *elfFile, Elf64_Ehdr header);
+void affiche_reimplantation_table(FILE *elfFile, Elf32_Ehdr header);
 
-void affichage_rel(FILE *elfFile, uint64_t offset, uint64_t entrees);
+void affichage_rel(FILE *elfFile, uint32_t offset, uint32_t entrees);
 
-void affichage_rela(FILE *elfFile, uint64_t offset, uint64_t entrees);
+void affichage_rela(FILE *elfFile, uint32_t offset, uint32_t entrees);
 
 #endif
