@@ -133,7 +133,6 @@ options read_options(int argc, char *argv[])
 					if (j != strlen(argv[i])-1)
 					{
 						Opt.secList[Opt.nb_sec] = &(argv[i][j+1]);
-						j = strlen(argv[i]);
 					}
 					// Cas de la lecture de l'argument suivant
 					else if (argv[i+1] != NULL)
@@ -148,6 +147,7 @@ options read_options(int argc, char *argv[])
 						help();
 					}
 					Opt.nb_sec++;
+					j = strlen(argv[i]);
 					break;
 				case 'H':
 					help();
