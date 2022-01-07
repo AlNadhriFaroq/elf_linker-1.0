@@ -3,6 +3,9 @@
 #include <string.h>
 #include "options.h"
 
+/*	help()
+		Affiche l'aide et les differentes options disponibles
+*/
 void help()
 {
 	printf("Usage: readelf <option(s)> elf-file(s)\n");
@@ -21,14 +24,26 @@ void help()
 	exit(1);
 }
 
+/*	read_options(int argc, char *argv[])
+		Lit et interprete les options donnees en entree du programme
+*/
 options read_options(int argc, char *argv[])
 {
+	// Cas sans argument, affiche l'aide
+	if (argc == 1)
+	{
+		help();
+	}
+	
 	options Opt = {};
 	
+	// Parcours de chaque argument entree
 	for (int i = 1 ; i < argc ; i++)
 	{
+		// Cas ou l'argument commence par deux tiret '--'
 		if (argv[i][0] == '-' && argv[i][1] == '-')
 		{
+			// comparaison direct entre l'argument courant et les options possibles
 			if (strcmp(argv[i], "--all") == 0)
 			{
 				Opt.h = 1;
@@ -54,12 +69,14 @@ options read_options(int argc, char *argv[])
 			}
 			else if (strcmp(argv[i], "--hex-dump") == 0)
 			{
+				// Cette option necessite de lire aussi l'argument suivant
 				i++;
 				if (argv[i] != NULL)
 				{
 					Opt.secList[Opt.nb_sec] = argv[i];
 					Opt.nb_sec++;
 				}
+				// Cas ou il n'y a pas d'argument suivant
 				else
 				{
 					printf("readelf: '--hex-dump' option need argument\n");
@@ -75,16 +92,21 @@ options read_options(int argc, char *argv[])
 			{
 				help();
 			}
+			// Cas ou l'argument n'est pas reconnu
 			else
 			{
 				printf("readelf: unrecognized option -- '%s'\n", argv[i]);
 				help();
 			}
 		}
+		
+		// Cas ou l'argument commence par un seul tiret '-'
 		else if (argv[i][0] == '-')
 		{
+			// Parcours de chaque caractere
 			for (int j = 1 ; j < strlen(argv[i]) ; j++)
 			{
+				// comparaison direct entre le caractere courant et les options possibles
 				switch (argv[i][j])
 				{
 				case 'a':
@@ -105,17 +127,21 @@ options read_options(int argc, char *argv[])
 				case 'r':
 					Opt.r = 1;
 					break;
+				// Cette option necessite de lire les caracteres suivant ou l'argument suivant
 				case 'x':
+					// Cas de la lecture des caracteres suivants de l'argument courant
 					if (j != strlen(argv[i])-1)
 					{
 						Opt.secList[Opt.nb_sec] = &(argv[i][j+1]);
 						j = strlen(argv[i]);
 					}
+					// Cas de la lecture de l'argument suivant
 					else if (argv[i+1] != NULL)
 					{
 						i++;
 						Opt.secList[Opt.nb_sec] = argv[i];
 					}
+					// Cas sans caracteres suivants, ni argument suivant
 					else
 					{
 						printf("readelf: option need argument -- 'x'\n");
@@ -126,6 +152,7 @@ options read_options(int argc, char *argv[])
 				case 'H':
 					help();
 					break;
+				// Cas ou le caractere ne correspond a aucune option
 				default:
 					printf("readelf: invalid option -- '%c'\n", argv[i][j]);
 					help();
@@ -133,27 +160,45 @@ options read_options(int argc, char *argv[])
 				}
 			}
 		}
+		
+		// Cas ou l'argument ne commence pas par un tiret
 		else
 		{
+			// L'argument est considere comme un nom de fichier
 			Opt.fileList[Opt.nb_file] = argv[i];
 			Opt.nb_file++;
 		}
 	}
 	
+	// Cas sans aucun fichier entree, rien à faire, affiche l'aide
+	if (Opt.nb_file == 0)
+	{
+		printf("readelf: WARNING: Nothing to do.\n");
+		help();
+	}
+	
 	return Opt;
 }
 
+/*	affiche_options(options Opt)
+		Affiche les options donnees en entree du programme
+*/
 void affiche_options(options Opt)
 {
-	printf("h = %d\nS = %d\ns = %d\nr = %d\n", Opt.h, Opt.S, Opt.s, Opt.r);
-	printf("nb_sec = %d\n", Opt.nb_sec);
+	printf("Afficher les headers : %d\n", Opt.h);
+	printf("Afficher la table des sections : %d\n", Opt.S);
+	printf("Afficher la table des symboles : %d\n", Opt.s);
+	printf("Afficher la table de reimplantation : %d\n", Opt.r);
+	
+	printf("Sections a afficher : %d\n", Opt.nb_sec);
 	for (int i = 0 ; i < Opt.nb_sec ; i++)
 	{
-		printf("   %s\n", Opt.secList[i]);
+		printf("    %s\n", Opt.secList[i]);
 	}
-	printf("nb_file = %d\n", Opt.nb_file);
+	
+	printf("Fichiers a afficher %d\n", Opt.nb_file);
 	for (int i = 0 ; i < Opt.nb_file ; i++)
 	{
-		printf("   %s\n", Opt.fileList[i]);
+		printf("    %s\n", Opt.fileList[i]);
 	}
 }
