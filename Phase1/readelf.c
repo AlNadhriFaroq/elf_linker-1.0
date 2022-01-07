@@ -42,7 +42,6 @@ int main(int argc, char *argv[])
 				exit(1);
 			}
 
-			liste_sec = lecture_section_table(elfFile, header);
 			// Execution des fonctions correspondants aux options entrees en parametre
 			if (Opt.h)
 			{
@@ -50,6 +49,7 @@ int main(int argc, char *argv[])
 			}
 			else if (Opt.S)
 			{
+				liste_sec = lecture_section_table(elfFile, header);
 				affiche_section_table(liste_sec, header.e_shoff);
 			}
 			else if (Opt.s)

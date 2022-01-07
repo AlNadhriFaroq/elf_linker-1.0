@@ -110,9 +110,9 @@ void find_flags(char *tab, int n)
 {
 	int i, j = 0;
 	strcpy(tab, "");
-	// les valeurs de tabVal proviennent du site https://refspecs.linuxbase.org/elf/gabi4+/ch4.sheader.html (Figure 4.11)
-	int tabVal[7] = {0x40, 0x20, 0x10, 0x4, 0x2, 0x1, 0x0};
-	char tabChar[7] = {'I', 'S', 'M', 'X', 'A', 'W', ' '};
+	// les valeurs de tabVal proviennent du site https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/6n33n7fcj/index.html
+	int tabVal[11] = {0x400,0x200,0x100,0x80,0x40, 0x20, 0x10, 0x4, 0x2, 0x1, 0x0};
+	char tabChar[11] = {'T','G','O','L','I', 'S', 'M', 'X', 'A', 'W', ' '};
 	for (i = 0; n > 0x0; i++)
 	{
 		if (n >= tabVal[i])
@@ -130,7 +130,7 @@ void find_flags(char *tab, int n)
 */
 liste_sections lecture_section_table(FILE *elfFile, Elf32_Ehdr header){
 	liste_sections liste;
-	char flags[6] = "";
+	char flags[15] = "";
 	Elf32_Shdr sectHdr;
 	char *sectNames = NULL;
 	char sh_type[25] = "";
@@ -196,7 +196,7 @@ void affiche_section_table(liste_sections liste, uint32_t offset){
 
 		printf("  [%2d] %-17s %-15s %08x %06x ", i, liste.tab[i].name, liste.tab[i].type,
 			   liste.tab[i].sec.sh_addr, liste.tab[i].sec.sh_offset);
-		printf("%06x %02x %2s %2d  %2d %2d\n", liste.tab[i].sec.sh_size,
+		printf("%06x %02x %3s %2d  %2d %2d\n", liste.tab[i].sec.sh_size,
 			   liste.tab[i].sec.sh_entsize, liste.tab[i].flag, liste.tab[i].sec.sh_link,
 			   liste.tab[i].sec.sh_info, liste.tab[i].sec.sh_addralign);
 	}
