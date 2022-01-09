@@ -2,8 +2,8 @@
 #define __SYMB_TABLE__
 
 #include <stdint.h>
-#include "readElfSecTable.h"
-#include "readElfHeader.h"
+#include "readelfHeader.h"
+#include "readelfSectTable.h"
 
 #define ELF32_ST_BIND(i)   ((i)>>4)
 #define ELF32_ST_TYPE(i)   ((i)&0xf)

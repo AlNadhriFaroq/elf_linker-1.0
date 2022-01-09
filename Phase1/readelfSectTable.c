@@ -2,15 +2,34 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "readElfSecTable.h"
-#include "readElfHeader.h"
+#include "readelfHeader.h"
+#include "readelfSectTable.h"
 
 /* Fichier principal de l'etape 2 : affichage de la table des sections */
 
-/*	find_type(long num, char *sh_type)
+
+/*	revstr(char *str)
+		Prend une chaine de caracteres et modifie sa valeur en l'inversant
+		utilisee pour faire la transition big endian / little endian
+*/
+void revstr(char *str)
+{
+	int len, temp;
+	len = strlen(str);
+	
+	for (int i = 0; i < len / 2; i++)
+	{
+		temp = str[i];
+		str[i] = str[len - i - 1];
+		str[len - i - 1] = temp;
+	}
+}
+
+
+/*	lire_type(long num, char *sh_type)
 		Lit la valeur donnee dans le premier parametre afin de definir la valeur du second
 */
-void find_type(long num, char *sh_type)
+void lire_type(long num, char *sh_type)
 {
 	// Documentation chapitre 1-11 Figure 1-9
 	switch (num)
@@ -87,33 +106,19 @@ void find_type(long num, char *sh_type)
 	}
 }
 
-/*	revstr(char *str)
-		Prend une chaine de caracteres et modifie sa valeur en l'inversant
-		utilisee pour faire la transition big Endian / little Endian
-*/
-void revstr(char *str)
-{
-	int i, len, temp;
-	len = strlen(str);
-	for (i = 0; i < len / 2; i++)
-	{
-		temp = str[i];
-		str[i] = str[len - i - 1];
-		str[len - i - 1] = temp;
-	}
-}
 
-/*	find_flags(char *tab, int n)
+/*	lire_flags(char *tab, int n)
 		Traduction des actions effectuees en flags pour une section
 */
-void find_flags(char *tab, int n)
+void lire_flags(char *tab, int n)
 {
-	int i, j = 0;
+	int j = 0;
 	strcpy(tab, "");
 	// les valeurs de tabVal proviennent du site https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/6n33n7fcj/index.html
 	int tabVal[11] = {0x400,0x200,0x100,0x80,0x40, 0x20, 0x10, 0x4, 0x2, 0x1, 0x0};
 	char tabChar[11] = {'T','G','O','L','I', 'S', 'M', 'X', 'A', 'W', ' '};
-	for (i = 0; n > 0x0; i++)
+	
+	for (int i = 0; n > 0x0; i++)
 	{
 		if (n >= tabVal[i])
 		{
@@ -125,16 +130,17 @@ void find_flags(char *tab, int n)
 	tab[j] = '\0';
 }
 
-/*	lecture_section_table(FILE *elfFile, Elf64_Ehdr header)
-		Lit la table
-*/
-liste_sections lecture_section_table(FILE *elfFile, Elf32_Ehdr header){
-	liste_sections liste;
-	char flags[15] = "";
-	Elf32_Shdr sectHdr;
-	char *sectNames = NULL;
-	char sh_type[25] = "";
 
+/*	lire_sections_table(FILE *elfFile, Elf64_Ehdr header)
+		Lit la table des sections dans le fichier elfFile
+*/
+SectionsList lire_sections_table(FILE *elfFile, Elf32_Ehdr header)
+{
+	SectionsList liste;
+	Elf32_Shdr sectHdr;
+	char flags[15] = "";
+	char sh_type[25] = "";
+	char *sectNames = NULL;
 
 	// Placement du curseur au debut de la premiere section
 	fseek(elfFile, header.e_shoff + header.e_shstrndx * header.e_shentsize, SEEK_SET);
@@ -147,58 +153,63 @@ liste_sections lecture_section_table(FILE *elfFile, Elf32_Ehdr header){
 	fseek(elfFile, sectHdr.sh_offset, SEEK_SET);
 	fread(sectNames, 1, sectHdr.sh_size, elfFile);
 
-	// Parcours de toutes les sections
-	
-	liste.nb_sections = header.e_shnum;
-	liste.tab = malloc(sizeof(section) * header.e_shnum);
+	// Preparation de la liste de sections
+	liste.nb_sect = header.e_shnum;
+	liste.sectTab = malloc(sizeof(Section) * header.e_shnum);
 
+	// Parcours de toutes les sections
 	for (int i = 0; i < header.e_shnum; i++)
 	{
-		char *sh_name = "";
 		// Lecture de l'en-tete de la section courante
-		fseek(elfFile, header.e_shoff + i * sizeof(liste.tab[i].sec), SEEK_SET);
-		fread(&liste.tab[i].sec, 1, sizeof(liste.tab[i].sec), elfFile);
+		fseek(elfFile, header.e_shoff + i * sizeof(liste.sectTab[i].header), SEEK_SET);
+		fread(&liste.sectTab[i].header, 1, sizeof(liste.sectTab[i].header), elfFile);
 
 		// Allocation memoire des donnees de la taille de la section definie par tab[i]
-		liste.tab[i].tabDonnee = malloc(liste.tab[i].sec.sh_size);
+		liste.sectTab[i].dataTab = malloc(liste.sectTab[i].header.sh_size);
 
 		// Lecture des flags la section courante
-		find_flags(flags, liste.tab[i].sec.sh_flags);
-		revstr(flags);
-		
-		strcpy(liste.tab[i].flag, flags);
+		lire_flags(flags, liste.sectTab[i].header.sh_flags);
+		revstr(flags);		
+		strcpy(liste.sectTab[i].flag, flags);
 
 		// Lecture du type de la section courante
-		find_type(liste.tab[i].sec.sh_type, sh_type);
-		sh_name = sectNames + liste.tab[i].sec.sh_name;
-		if(strlen(sh_name) > 16){
+		lire_type(liste.sectTab[i].header.sh_type, sh_type);
+		char *sh_name = sectNames + liste.sectTab[i].header.sh_name;
+		if(strlen(sh_name) > 16)
+		{
 			sh_name[17] = '\0';
 		}
-		strcpy(liste.tab[i].name, sh_name);
-		strcpy(liste.tab[i].type, sh_type);
+		strcpy(liste.sectTab[i].name, sh_name);
+		strcpy(liste.sectTab[i].type, sh_type);
 	}
-
 
 	free(sectNames);
 	return liste;
 }
 
-/*	affiche_section_table(FILE *elfFile, Elf64_Ehdr header)
+
+/*	afficher_sections_table(SectionsList liste, uint32_t offset)
 		Affichage de la table des sections et des informations pour chaque section
 */
-void affiche_section_table(liste_sections liste, uint32_t offset){
-
-	printf("There are %d section headers, starting at offset 0x%x:\n\n",
-		   liste.nb_sections, offset);
+void afficher_sections_table(SectionsList liste, uint32_t offset)
+{
+	printf("There are %d section headers, starting at offset 0x%x:\n\n", liste.nb_sect, offset);
 	printf("Section Headers:\n  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al\n");
 
-	for (int i = 0; i < liste.nb_sections; i++){
-
-		printf("  [%2d] %-17s %-15s %08x %06x ", i, liste.tab[i].name, liste.tab[i].type,
-			   liste.tab[i].sec.sh_addr, liste.tab[i].sec.sh_offset);
-		printf("%06x %02x %3s %2d  %2d %2d\n", liste.tab[i].sec.sh_size,
-			   liste.tab[i].sec.sh_entsize, liste.tab[i].flag, liste.tab[i].sec.sh_link,
-			   liste.tab[i].sec.sh_info, liste.tab[i].sec.sh_addralign);
+	for (int i = 0; i < liste.nb_sect; i++)
+	{
+		printf("  [%2d] %-17s %-15s %08x %06x ", i,
+			   liste.sectTab[i].name,
+			   liste.sectTab[i].type,
+			   liste.sectTab[i].header.sh_addr,
+			   liste.sectTab[i].header.sh_offset);
+		printf("%06x %02x %3s %2d  %2d %2d\n",
+			   liste.sectTab[i].header.sh_size,
+			   liste.sectTab[i].header.sh_entsize,
+			   liste.sectTab[i].flag,
+			   liste.sectTab[i].header.sh_link,
+			   liste.sectTab[i].header.sh_info,
+			   liste.sectTab[i].header.sh_addralign);
 	}
 
 	/* En termes de flags, certains n'étaient pas présents dans la documentation.
@@ -209,4 +220,21 @@ void affiche_section_table(liste_sections liste, uint32_t offset){
 	printf("  L (link order), O (extra OS processing required), G (group), T (TLS),\n");
 	printf("  C (compressed), x (unknown), o (OS specific), E (exclude),\n");
 	printf("  l (large), p (processor specific)\n");
+}
+
+
+/*	supprimer_sections_table(SectionsList liste)
+		Supprime et libere la memoire de la structure liste donnee
+*/
+void supprimer_sections_table(SectionsList liste)
+{
+	// Parcours de toutes les sections
+	for (int i = 0; i < liste.nb_sect; i++)
+	{
+		// Liberation de la memoire du tableau du contenu de la section courante
+		free(liste.sectTab[i].dataTab);
+	}
+	
+	// Liberation de la memoire du tableau des sections
+	free(liste.sectTab);
 }

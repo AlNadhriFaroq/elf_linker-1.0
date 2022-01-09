@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "readElfRel.h"
+#include "readelfHeader.h"
+#include "readelfSectTable.h"
+#include "readelfReimpTable.h"
 
 /* Fichier principal de l'etape 5 : affichage des tables de reimplementation */
 

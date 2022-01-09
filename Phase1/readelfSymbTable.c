@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "readElfSym.h"
+#include "readelfHeader.h"
+#include "readelfSectTable.h"
+#include "readelfSymbTable.h"
 
 void find_type_sym(uint32_t value, char *type)
 {

@@ -1,26 +1,30 @@
 Mode d'emploi de l'utilisation du projet de lecture de fichiers ELF :
 
-Phase 1 : 
-* Se placer dans le dossier Phase1 (cd Phase1)
-* Compilation avec le MakeFile (make)
-* Execution du projet (./readelf <option> <nomFichier>)
-        nomFichier etant soit un executable (ici readelf), soit un fichier .o (readelf.o ou readElfHeader.o).
+PHASE 1 : 
 
-Une fonction d'aide est disponible pour choisir l'option adequate (./readelf -H)
-Cette fonction est egalement disponible en cas de mauvaise manipulation (par exemple -u qui n'existe pas)
+Protocole :
+  * Se placer dans le dossier Phase1  |  cd Phase1
+  * Compiler avec le Makefile         |  make
+  * Executer le projet                |  ./readelf <option> <nomFichier>
+
+Une option d'aide est disponible pour choisir les options adequates (./readelf -H)
+Cette aide s'affiche egalement en cas de mauvaise manipulation (par exemple -U qui n'existe pas)
 
 Liste des options :
-  -a                 Equivalent to: -h -S -s -r
-  -h                 Display the ELF file header                            (ETAPE 1)
-  -S                 Display the sections' header                           (ETAPE 2)
-  -s                 Display the symbol table                               (ETAPE 4)
-  -r                 Display the relocations (if present)                   (ETAPE 5)
-  -x <number|name>   Dump the contents of section <number|name> as bytes    (ETAPE 3)
-  -H                 Display this information
-
+  -a --all               Equivalent to: -h -S -s -r
+  -h --file-header       Display the ELF file header
+  -S --section-headers   Display the sections' header
+     --sections          An alias for --section-headers
+  -s --syms              Display the symbol table
+     --symbols           An alias for --syms
+  -r --relocs            Display the relocations (if present)
+  -x --hex-dump=<number|name>
+                         Dump the contents of section <number|name> as bytes
+  -H --help              Display this information
+	
 Exemple de lancement du programme pour les etapes 1, 2, 4 ou 5 : 
-./readelf -h readelf.o
+  ./readelf -h readelf.o
 
 Exemple de lancement du programme pour l'etape 3 : 
-./readelf -x 8 readelf.o
-./readelf -x .text readelf.o
+  ./readelf -x 8 readelf.o
+  ./readelf -x .text readelf.o

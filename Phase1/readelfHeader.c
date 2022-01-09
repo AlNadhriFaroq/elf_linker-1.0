@@ -1,14 +1,38 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "readElfHeader.h"
+#include "readelfHeader.h"
 
 /* Fichier principal de l'etape 1 : affichage de l'en-tete */
 
-/*	affiche_header(Elf64_Ehdr)
+
+/*	lire_entete(FILE *elfFile)
+		Lit les informations du header du fichier donne
+*/
+Elf32_Ehdr lire_entete(FILE *elfFile)
+{
+	Elf32_Ehdr header;
+	fread(&header, 1, sizeof(header), elfFile); 
+	return header;
+}
+
+
+/*	est_fichier_elf(Elf64_Ehdr header)
+		Renvoie 1 si l'en-tete donnee correspond à celui d'un fichier elf, 0 sinon
+*/
+int est_fichier_elf(Elf32_Ehdr header)
+{
+	return (header.e_ident[0] == 0x7f &&
+			header.e_ident[1] == 'E' &&
+			header.e_ident[2] == 'L' &&
+			header.e_ident[3] == 'F');
+}
+
+
+/*	affiche_entete(Elf64_Ehdr header)
 		Affichage des informations de la structure entree en parametre
 */
-void affiche_header(Elf32_Ehdr header)
+void afficher_entete(Elf32_Ehdr header)
 {
 	// variables en texte pur, non recuperees dans le header
 	char class[15] = "";

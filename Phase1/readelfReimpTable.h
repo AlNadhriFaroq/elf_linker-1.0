@@ -2,8 +2,8 @@
 #define __REL_H__
 
 #include <stdint.h>
-#include "readElfSecTable.h"
-#include "readElfHeader.h"
+#include "readelfHeader.h"
+#include "readelfSectTable.h"
 
 #define ELF32_R_SYM(i)	  ((i)>>8)
 #define ELF32_R_TYPE(i)   ((unsigned char)(i))

@@ -1,12 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "options.h"
+#include "readelfOptions.h"
 
-/*	help()
+
+/*	afficher_aide()
 		Affiche l'aide et les differentes options disponibles
 */
-void help()
+void afficher_aide()
 {
 	printf("Usage: readelf <option(s)> elf-file(s)\n");
 	printf(" Display information about the contents of ELF format files\n");
@@ -24,18 +25,19 @@ void help()
 	exit(1);
 }
 
-/*	read_options(int argc, char *argv[])
+
+/*	lire_options(int argc, char *argv[])
 		Lit et interprete les options donnees en entree du programme
 */
-options read_options(int argc, char *argv[])
+Options lire_options(int argc, char *argv[])
 {
 	// Cas sans argument, affiche l'aide
 	if (argc == 1)
 	{
-		help();
+		afficher_aide();
 	}
 	
-	options Opt = {};
+	Options Opt = {};
 	
 	// Parcours de chaque argument entree
 	for (int i = 1 ; i < argc ; i++)
@@ -73,30 +75,30 @@ options read_options(int argc, char *argv[])
 				i++;
 				if (argv[i] != NULL)
 				{
-					Opt.secList[Opt.nb_sec] = argv[i];
-					Opt.nb_sec++;
+					Opt.sectList[Opt.nb_sect] = argv[i];
+					Opt.nb_sect++;
 				}
 				// Cas ou il n'y a pas d'argument suivant
 				else
 				{
 					printf("readelf: '--hex-dump' option need argument\n");
-					help();
+					afficher_aide();
 				}
 			}
 			else if (strncmp(argv[i], "--hex-dump=", 11) == 0)
 			{
-				Opt.secList[Opt.nb_sec] = &(argv[i][11]);
-				Opt.nb_sec++;
+				Opt.sectList[Opt.nb_sect] = &(argv[i][11]);
+				Opt.nb_sect++;
 			}
 			else if (strcmp(argv[i], "--help") == 0)
 			{
-				help();
+				afficher_aide();
 			}
 			// Cas ou l'argument n'est pas reconnu
 			else
 			{
 				printf("readelf: unrecognized option -- '%s'\n", argv[i]);
-				help();
+				afficher_aide();
 			}
 		}
 		
@@ -132,30 +134,30 @@ options read_options(int argc, char *argv[])
 					// Cas de la lecture des caracteres suivants de l'argument courant
 					if (j != strlen(argv[i])-1)
 					{
-						Opt.secList[Opt.nb_sec] = &(argv[i][j+1]);
+						Opt.sectList[Opt.nb_sect] = &(argv[i][j+1]);
 					}
 					// Cas de la lecture de l'argument suivant
 					else if (argv[i+1] != NULL)
 					{
 						i++;
-						Opt.secList[Opt.nb_sec] = argv[i];
+						Opt.sectList[Opt.nb_sect] = argv[i];
 					}
 					// Cas sans caracteres suivants, ni argument suivant
 					else
 					{
 						printf("readelf: option need argument -- 'x'\n");
-						help();
+						afficher_aide();
 					}
-					Opt.nb_sec++;
+					Opt.nb_sect++;
 					j = strlen(argv[i]);
 					break;
 				case 'H':
-					help();
+					afficher_aide();
 					break;
 				// Cas ou le caractere ne correspond a aucune option
 				default:
 					printf("readelf: invalid option -- '%c'\n", argv[i][j]);
-					help();
+					afficher_aide();
 					break;
 				}
 			}
@@ -174,26 +176,27 @@ options read_options(int argc, char *argv[])
 	if (Opt.nb_file == 0)
 	{
 		printf("readelf: WARNING: Nothing to do.\n");
-		help();
+		afficher_aide();
 	}
 	
 	return Opt;
 }
 
-/*	affiche_options(options Opt)
+
+/*	afficher_options(options Opt)
 		Affiche les options donnees en entree du programme
 */
-void affiche_options(options Opt)
+void afficher_options(Options Opt)
 {
 	printf("Afficher les headers : %d\n", Opt.h);
 	printf("Afficher la table des sections : %d\n", Opt.S);
 	printf("Afficher la table des symboles : %d\n", Opt.s);
 	printf("Afficher la table de reimplantation : %d\n", Opt.r);
 	
-	printf("Sections a afficher : %d\n", Opt.nb_sec);
-	for (int i = 0 ; i < Opt.nb_sec ; i++)
+	printf("Sections a afficher : %d\n", Opt.nb_sect);
+	for (int i = 0 ; i < Opt.nb_sect ; i++)
 	{
-		printf("    %s\n", Opt.secList[i]);
+		printf("    %s\n", Opt.sectList[i]);
 	}
 	
 	printf("Fichiers a afficher %d\n", Opt.nb_file);

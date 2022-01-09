@@ -1,74 +1,88 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "readElfHeader.h"
-#include "readElfSecTable.h"
-#include "readElfLecSect.h"
-#include "readElfSym.h"
-#include "readElfRel.h"
-#include "options.h"
+#include "readelfOptions.h"
+#include "readelfHeader.h"
+#include "readelfSectTable.h"
+#include "readelfSectLect.h"
+#include "readelfSymbTable.h"
+#include "readelfReimpTable.h"
 
 int main(int argc, char *argv[])
 {
 	// Lecture et interpretation des options entrees
-	options Opt = read_options(argc, argv);
-	liste_sections liste_sec;
+	Options opt = lire_options(argc, argv);
 
 	// Parcours des fichiers a afficher
-	for (int i = 0 ; i < Opt.nb_file ; i++)
+	for (int i = 0 ; i < opt.nb_file ; i++)
 	{
 		// Ouverture du fichier courant
 		FILE *elfFile;
-		elfFile = fopen(Opt.fileList[i], "rb");
+		elfFile = fopen(opt.fileList[i], "rb");
 		
 		// Cas ou le fichier presente une erreur
 		if (elfFile == NULL)
 		{
-			printf("readelf: ERROR: «%s»: File open error!\n", Opt.fileList[i]);
+			printf("readelf: ERROR: «%s»: File open error!\n", opt.fileList[i]);
 		}
 		
 		// Cas ou le fichier s'est ouvert normalement
 		else
 		{
 			// Lecture de l'entete du fichier
-			Elf32_Ehdr header;
-			fread(&header, 1, sizeof(header), elfFile); 
+			Elf32_Ehdr header = lire_entete(elfFile);
 
 			// Verification que le fichier lu est bien un fichier ELF
-			if (!(header.e_ident[0] == 0x7f && header.e_ident[1] == 'E' &&
-				header.e_ident[2] == 'L' && header.e_ident[3] == 'F'))
+			if (!est_fichier_elf(header))
 			{
 				printf("readelf: Error: Not an ELF file - it has the wrong magic bytes at the start\n");
 				fclose(elfFile);
 				exit(1);
 			}
-
-			// Execution des fonctions correspondants aux options entrees en parametre
-			if (Opt.h)
+			
+			// Affichage de l'en-tete si l'option '-h' est activee
+			if (opt.h)
 			{
-				affiche_header(header);
+				afficher_entete(header);
 			}
-			else if (Opt.S)
+			
+			// Lecture de la table des sections du fichier
+			SectionsList liste_sections = lire_sections_table(elfFile, header);
+			
+			// Affichage de la table des sections si l'option '-S' est activee
+			if (opt.S)
 			{
-				liste_sec = lecture_section_table(elfFile, header);
-				affiche_section_table(liste_sec, header.e_shoff);
+				afficher_sections_table(liste_sections, header.e_shoff);
 			}
-			else if (Opt.s)
+			
+			// Lecture et affichage de la table des symboles si l'option '-s' est activee
+			if (opt.s)
 			{
-				affiche_symboles(elfFile, header);
+				// struct = lire_symboles_table(elfFile, header);
+				// afficher_symboles_tables(struct);
 			}
-			else if (Opt.r)
+			
+			// Lecture et affichage de la table de reimplantation si l'option '-r' est activee
+			if (opt.r)
 			{
-				affiche_reimplantation_table(elfFile, header);
+				// struct = lire_reimp_table(elfFile, header);
+				// afficher_reimp_table(struct);
 			}
-			else if (Opt.nb_sec > 0)
+			
+			
+			// Lecture et affichage du contenu des sections si l'option '-x' est activee
+			if (opt.nb_sect > 0)
 			{
-				// Parcours des sections a afficher
-				for (int s = 0 ; s < Opt.nb_sec ; s++)
-				{
-					affiche_section(elfFile, header, Opt.secList[s]);
-				}
+				// Renommage, tri et suppression des doublons de Opt.sectList
+				trier_sections(&opt, liste_sections);
+				
+				// Lecture du contenu des sections
+				lire_sections(elfFile, liste_sections);
+				
+				// Affichage du contenu des sections voulues
+				afficher_sections(liste_sections, opt);
 			}
-
+			
+			supprimer_sections_table(liste_sections);
 			fclose(elfFile);
 		}
 	}
