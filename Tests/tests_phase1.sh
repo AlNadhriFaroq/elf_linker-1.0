@@ -3,7 +3,7 @@
 cd ../Phase1
 make > /dev/null
 
-# Test l'affiche du header
+# Test l'affiche de l'en-tete
 ./readelf -h $1 > resultat_projet.txt
 arm-none-eabi-readelf -h $1 > resultat_fourni.txt
 diff resultat_projet.txt resultat_fourni.txt > /dev/null
@@ -38,17 +38,6 @@ for num in $(seq 0 $nb_sec)
 do
 	./readelf -x $num $1 > resultat_projet.txt
 	arm-none-eabi-readelf -x $num $1 | cut -d " " -f 1-7 > resultat_fourni.txt
-
-	# Mise en forme du cas ou la section est vide conformement a notre resultat
-	no_dump=$(cut -d " " -f 3-7 resultat_fourni.txt)
-	if [[ "$no_dump" == "has no data to dump." ]]
-	then
-		# Si la section est bien vide, alors on modifie
-		nom_section=$(cut -d " " -f 2 resultat_fourni.txt)
-		echo "" > resultat_fourni.txt
-		echo "Hex dump of section $nom_section:" >> resultat_fourni.txt
-		echo "  0x00000000" >> resultat_fourni.txt
-	fi
 
 	# Mise en forme du cas ou une note est presente dans le resultat fourni et suppression de la note
 	grep -v " NOTE:" resultat_fourni.txt > resultat_fourni_grep.txt
