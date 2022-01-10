@@ -148,7 +148,7 @@ void afficher_section(Section sect)
 	// Cas ou le contenu de la section est vide
 	if (sect.header.sh_size == 0)
 	{
-		printf("Section « %s » has no data to dump.\n", sect.name);
+		printf("Section '%s' has no data to dump.\n", sect.name);
 	}
 	
 	// Cas ou le contenu de la section n'est pas vide

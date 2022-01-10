@@ -23,7 +23,7 @@ typedef struct
 // Structure pour stocker les informations d'une section : nom, type, flags, donnees et en-tete
 typedef struct
 {
-	char name[20];
+	char name[30];
 	char type[25];
 	char flag[6];
 	uint8_t *dataTab;

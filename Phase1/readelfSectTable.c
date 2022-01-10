@@ -70,11 +70,20 @@ void lire_type(long num, char *sh_type)
 	case 11:
 		strcpy(sh_type, "DYNSYM");
 		break;
-	case 0xe:
+	case 14:
 		strcpy(sh_type, "INIT_ARRAY");
 		break;
-	case 0xf:
+	case 15:
 		strcpy(sh_type, "FINI_ARRAY");
+		break;
+	case 16:
+		strcpy(sh_type, "PREINIT_ARRAY");
+		break;
+	case 17:
+		strcpy(sh_type, "GROUP");
+		break;
+	case 18:
+		strcpy(sh_type, "SYMTAB_SHNDX");
 		break;
 	case 0x6ffffff6:
 		strcpy(sh_type, "GNU_HASH");
@@ -115,8 +124,8 @@ void lire_flags(char *tab, int n)
 	int j = 0;
 	strcpy(tab, "");
 	// les valeurs de tabVal proviennent du site https://docs.oracle.com/cd/E19120-01/open.solaris/819-0690/6n33n7fcj/index.html
-	int tabVal[11] = {0x400,0x200,0x100,0x80,0x40, 0x20, 0x10, 0x4, 0x2, 0x1, 0x0};
-	char tabChar[11] = {'T','G','O','L','I', 'S', 'M', 'X', 'A', 'W', ' '};
+	int tabVal[12] = {0x800, 0x400,0x200,0x100,0x80,0x40, 0x20, 0x10, 0x4, 0x2, 0x1, 0x0};
+	char tabChar[12] = {'C', 'T','G','O','L','I', 'S', 'M', 'X', 'A', 'W', ' '};
 	
 	for (int i = 0; n > 0x0; i++)
 	{
@@ -175,10 +184,6 @@ SectionsList lire_sections_table(FILE *elfFile, Elf32_Ehdr header)
 		// Lecture du type de la section courante
 		lire_type(liste.sectTab[i].header.sh_type, sh_type);
 		char *sh_name = sectNames + liste.sectTab[i].header.sh_name;
-		if(strlen(sh_name) > 16)
-		{
-			sh_name[17] = '\0';
-		}
 		strcpy(liste.sectTab[i].name, sh_name);
 		strcpy(liste.sectTab[i].type, sh_type);
 	}
@@ -198,8 +203,15 @@ void afficher_sections_table(SectionsList liste, uint32_t offset)
 
 	for (int i = 0; i < liste.nb_sect; i++)
 	{
+		char name[30] = "";
+		strcpy(name, liste.sectTab[i].name);
+		if (strlen(name) > 17)
+		{
+			name[17] = '\0';
+		}
+		
 		printf("  [%2d] %-17s %-15s %08x %06x ", i,
-			   liste.sectTab[i].name,
+			   name,
 			   liste.sectTab[i].type,
 			   liste.sectTab[i].header.sh_addr,
 			   liste.sectTab[i].header.sh_offset);
@@ -219,7 +231,7 @@ void afficher_sections_table(SectionsList liste, uint32_t offset)
 	printf("  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),\n");
 	printf("  L (link order), O (extra OS processing required), G (group), T (TLS),\n");
 	printf("  C (compressed), x (unknown), o (OS specific), E (exclude),\n");
-	printf("  l (large), p (processor specific)\n");
+	printf("  p (processor specific)\n");
 }
 
 
