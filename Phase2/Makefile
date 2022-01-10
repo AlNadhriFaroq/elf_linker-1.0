@@ -1,21 +1,20 @@
 CC=gcc -m32
 CFLAGS= -Wall -Werror -g
 
-all: renumSect correctSymboles reimpTypeR_ARM_ABS
+all: reimplantation
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-renumSect.o: ../Phase1/readelfOptions.h ../Phase1/readelfHeader.h ../Phase1/readelfSectTable.h ../Phase1/readelfSectLect.h 
+reimpRenumSect.o: reimpRenumSect.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o
+reimpCorrectSymb.o: reimpCorrectSymb.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o ../Phase1/readelfSymbTable.o
+reimpTypeAbs.o: reimpTypeAbs.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o ../Phase1/readelfSymbTable.o ../Phase1/readelfReimpTable.o
+reimpTypeJumpCall.o: reimpTypeJumpCall.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o ../Phase1/readelfSymbTable.o ../Phase1/readelfReimpTable.o
+#interfaceSimul.o: interfaceSimul.h
+#productionExec.o: productionExec.h
 
-renumSect: renumSect.o ../Phase1/readelfOptions.o ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o
-	$(CC) -o $@ $^
-
-correctSymboles: correctSymboles.o
-	$(CC) -o $@ $^
-
-reimpTypeR_ARM_ABS: reimpTypeR_ARM_ABS.o
+reimplantation: reimplantation.o ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o ../Phase1/readelfSymbTable.o ../Phase1/readelfReimpTable.o reimpRenumSect.o reimpCorrectSymb.o reimpTypeAbs.o reimpTypeJumpCall.o
 	$(CC) -o $@ $^
 
 clean:
-	rm *.o renumSect correctSymboles reimpTypeR_ARM_ABS
+	rm *.o reimplantation outFile >/dev/null

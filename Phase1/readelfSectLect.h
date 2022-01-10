@@ -22,7 +22,7 @@ void trier_sections(Options *opt, SectionsList liste);
  * parametres : FILE *elfFile, Section sect
  * resultat : aucun
  * description : Lit dans le fichier elfFile le contenu de la section sect
- *				 et complete la dataTab de la structure sect dediee.
+ *               et complete la dataTab de la structure sect dediee.
  * effet de bord : aucun
  *******************************************************************************/
 void lire_section(FILE *elfFile, Section Sect);
@@ -53,9 +53,31 @@ void afficher_section(Section sect);
  * parametres : SectionsList liste_sections, Options opt
  * resultat : aucun
  * description : Affiche le contenu des sections de liste_sections presentes
- *				 dans dans la liste de sections entree.
+ *               dans dans la liste de sections entree.
  * effet de bord : aucun
  *******************************************************************************/
 void afficher_sections(SectionsList liste_sections, Options opt);
+
+
+/*******************************************************************************
+ * ecrire_section
+ * parametres : FILE *outFile, Section sect
+ * resultat : aucun
+ * description : Ecrit dans le fichier outFile le contenu d'une section definie
+ *               dans la structure sect.
+ * effet de bord : Ecrit dans le fichier
+ *******************************************************************************/
+void ecrire_section(FILE *outFile, Section Sect);
+
+
+/*******************************************************************************
+ * ecrire_sections
+ * parametres : FILE *outFile, SectionsList liste 
+ * resultat : aucun
+ * description : Ecrit dans le fichier outFile les contenus des sections de la
+ *               table des sections definie dans la structure liste.
+ * effet de bord : Ecrit dans le fichier
+ *******************************************************************************/
+void ecrire_sections(FILE *outFile, SectionsList liste);
 
 #endif

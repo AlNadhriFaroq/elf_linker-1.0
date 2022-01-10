@@ -16,5 +16,8 @@ readelfReimpTable.o: readelfHeader.h readelfSectTable.h readelfReimpTable.h
 readelf: readelf.o readelfOptions.o readelfHeader.o readelfSectTable.o readelfSectLect.o readelfSymbTable.o readelfReimpTable.o
 	$(CC) -o $@ $^
 
+writeelf: writeelf.o readelfHeader.o readelfSectTable.o readelfSectLect.o readelfSymbTable.o readelfReimpTable.o
+	$(CC) -o $@ $^
+
 clean:
-	rm *.o readelf
+	rm *.o readelf writeelf > /dev/null

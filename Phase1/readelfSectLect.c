@@ -127,7 +127,7 @@ void lire_section(FILE *elfFile, Section sect)
 }
 
 
-/*	lire_sections(FILE *elfFile, Elf64_Ehdr header, SectionsList liste)
+/*	lire_sections(FILE *elfFile, SectionsList liste)
 		Lit le contenu d'une liste de sections
 */
 void lire_sections(FILE *elfFile, SectionsList liste)
@@ -208,5 +208,27 @@ void afficher_sections(SectionsList liste, Options opt)
 		{
 			printf("readelf: Warning: Section '%s' was not dumped because it does not exist!\n", opt.sectList[i]);
 		}
+	}
+}
+
+
+/*	ecrire_section(FILE *outFile, Section sect)
+		Ecrit le contenu d'une section dans le fichier
+*/
+void ecrire_section(FILE *outFile, Section sect)
+{
+	fwrite(sect.dataTab, 1, sect.header.sh_size, outFile);
+}
+
+
+/*	ecrire_sections(FILE *outFile, SectionsList liste)
+		Ecrit le contenu d'une liste de sections dans le fichier
+*/
+void ecrire_sections(FILE *outFile, SectionsList liste)
+{
+	// Parcours des sections
+	for (int i = 0; i < liste.nb_sect; i++)
+	{
+		ecrire_section(outFile, liste.sectTab[i]);
 	}
 }

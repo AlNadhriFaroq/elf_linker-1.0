@@ -29,7 +29,7 @@ int est_fichier_elf(Elf32_Ehdr header)
 }
 
 
-/*	affiche_entete(Elf64_Ehdr header)
+/*	afficher_entete(Elf64_Ehdr header)
 		Affichage des informations de la structure entree en parametre
 */
 void afficher_entete(Elf32_Ehdr header)
@@ -130,4 +130,13 @@ void afficher_entete(Elf32_Ehdr header)
 	printf("  Size of section headers:           %d (bytes)\n", header.e_shentsize);
 	printf("  Number of section headers:         %d\n", header.e_shnum);
 	printf("  Section header string table index: %d\n", header.e_shstrndx);
+}
+
+
+/*	ecrire_entete(FILE *outFile, Elf64_Ehdr header)
+		Ecriture du contenu de la structure dans le fichier
+*/
+void ecrire_entete(FILE *outFile, Elf32_Ehdr header)
+{
+	fwrite(&header, 1, sizeof(header), outFile);
 }

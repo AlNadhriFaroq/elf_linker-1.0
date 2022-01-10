@@ -39,45 +39,11 @@ typedef struct
 
 
 /*******************************************************************************
- * revstr
- * parametres : char *str
- * resultat : aucun
- * description : Transforme une chaine de caracteres donnee en sa chaine
- *               inverse/miroir (Exemple : noel -> leon).
- * effet de bord : modification du contenu de str
- *******************************************************************************/
-void revstr(char *str);
-
-
-/*******************************************************************************
- * lire_type
- * parametres : long num, char *sh_type
- * resultat : aucun
- * description : Associe a sh_type la valeur textuelle correspondant a la valeur
- *               de num, le type d'une section.
- * effet de bord : remplissage de la valeur de sh_type
- *******************************************************************************/
-void lire_type(long num, char *sh_type);
-
-
-/*******************************************************************************
- * lire_flags
- * parametres : char *tab, int n
- * resultat : aucun
- * description : Remplit le tableau tab avec les flags de la section n.
- *               Ces flags correspondent aux differents type d'instructions lues
- *               et effectuees dans la section.
- * effet de bord : remplissage de tab
- *******************************************************************************/
-void lire_flags(char *tab, int n);
-
-
-/*******************************************************************************
  * lire_sections_table
  * parametres : FILE *elfFile, Elf64_Ehdr header
  * resultat : SectionsList
  * description : Lit dans le fichier elfFile les informations sur les sections
- *				 et les renvoie sous la forme d'une structure dediee.
+ *               et les renvoie sous la forme d'une structure dediee.
  * effet de bord : aucun
  *******************************************************************************/
 SectionsList lire_sections_table(FILE *elfFile, Elf32_Ehdr header);
@@ -88,10 +54,21 @@ SectionsList lire_sections_table(FILE *elfFile, Elf32_Ehdr header);
  * parametres : SectionsList liste, uint32_t offset
  * resultat : aucun
  * description : Affiche de facon lisible les informations contenu dans la
- *				 structures liste donnee.
+ *               structures liste donnee.
  * effet de bord : aucun
  *******************************************************************************/
 void afficher_sections_table(SectionsList liste, uint32_t offset);
+
+
+/*******************************************************************************
+ * ecrire_sections_table
+ * parametres : FILE *outFile, SectionsList liste
+ * resultat : aucun
+ * description : Ecrit dans le fichier outFile le contenu de la table des
+ *               sections definie dans la structure header.
+ * effet de bord : Ecriture dans le fichier
+ *******************************************************************************/
+void ecrire_sections_table(FILE *outFile, SectionsList liste);
 
 
 /*******************************************************************************
