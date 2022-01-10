@@ -12,7 +12,7 @@
 		Prend une chaine de caracteres et modifie sa valeur en l'inversant
 		utilisee pour faire la transition big endian / little endian
 */
-void revstr(char *str)
+static void revstr(char *str)
 {
 	int len, temp;
 	len = strlen(str);
@@ -29,7 +29,7 @@ void revstr(char *str)
 /*	lire_type(long num, char *sh_type)
 		Lit la valeur donnee dans le premier parametre afin de definir la valeur du second
 */
-void lire_type(long num, char *sh_type)
+static void lire_type(long num, char *sh_type)
 {
 	// Documentation chapitre 1-11 Figure 1-9
 	switch (num)
@@ -119,7 +119,7 @@ void lire_type(long num, char *sh_type)
 /*	lire_flags(char *tab, int n)
 		Traduction des actions effectuees en flags pour une section
 */
-void lire_flags(char *tab, int n)
+static void lire_flags(char *tab, int n)
 {
 	int j = 0;
 	strcpy(tab, "");
@@ -232,6 +232,20 @@ void afficher_sections_table(SectionsList liste, uint32_t offset)
 	printf("  L (link order), O (extra OS processing required), G (group), T (TLS),\n");
 	printf("  C (compressed), x (unknown), o (OS specific), E (exclude),\n");
 	printf("  p (processor specific)\n");
+}
+
+
+/*	ecrire_sections_table(FILE *outFile, SectionsList liste)
+		Ecrit dans la tables des sections dans le fichier 
+*/
+void ecrire_sections_table(FILE *outFile, SectionsList liste)
+{
+	// Parcours de toutes les sections
+	for (int i = 0; i < liste.nb_sect; i++)
+	{
+		// Ecriture de l'en-tete de la section courante
+		fwrite(&liste.sectTab[i].header, 1, sizeof(liste.sectTab[i].header), outFile);
+	}
 }
 
 
