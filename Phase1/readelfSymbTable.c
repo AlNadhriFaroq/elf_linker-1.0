@@ -109,6 +109,23 @@ TYPE_SYMB find_type_symbole(int num)
 	}
 }
 
+void find_visibility(int num,char *vis){
+	switch(num){
+		case 1:
+			strcpy(vis,"INTERNAL");
+			break;
+		case 2:
+			strcpy(vis, "HIDDEN");
+			break;
+		case 3:
+			strcpy(vis,"PROTECTED");
+			break;
+		default:
+			strcpy(vis, "DEFAULT");
+			break;
+	}
+}
+
 void find_name_symb(Section strtab, char *name, uint32_t debut_mot)
 {
 	int i = 0;
@@ -126,45 +143,51 @@ void affiche_sym(Section strtab, Section symtab, Section dynsym, Section dynstr,
 {
 	char type[10];
 	char bind[10];
+	char vis[10];
 	char name[50];
 	char ndx[16];
 	Elf32_Sym sym;
+	if (nb > 1)
+	{
+		fseek(elfFile, dynsym.header.sh_offset, SEEK_SET);
+		uint32_t nb_symbole = dynsym.header.sh_size / dynsym.header.sh_entsize;
+		printf("Symbol table '%s' contains %d entries:\n", dynsym.name, nb_symbole);
+		printf("   Num:    Value  Size Type    Bind   Vis      Ndx Name\n");
+		for (int i = 0; i < nb_symbole; i++)
+		{
+			fread(&sym, 1, sizeof(sym), elfFile);
+			find_type_sym(ELF32_ST_TYPE(sym.st_info), type);
+			find_bind_symb(ELF32_ST_BIND(sym.st_info), bind);
+			find_visibility(ELF32_ST_VISIBILITY(sym.st_other),vis);
+			find_name_symb(dynstr, name, sym.st_name);
+			find_ndx_symb(sym.st_shndx, ndx);
+			printf("    %3d: %08x %-3d %-8s %-8s %s %s  %s \n", i, sym.st_value, sym.st_size, type, bind,vis, ndx, name);
+		}
+	}
+	printf("\n");
+
 	if (nb >= 1)
 	{
 		// printf("%lx\n", symtab.sec.sh_offset);
 		fseek(elfFile, symtab.header.sh_offset, SEEK_SET);
 		uint32_t nb_symbole = symtab.header.sh_size / symtab.header.sh_entsize;
 		printf("Symbol table '%s' contains %d entries:\n", symtab.name, nb_symbole);
-		printf("   Num:    Value               Size                   Type            Bind       Ndx Name\n");
+		printf("     Num:    Value  Size Type    Bind   Vis      Ndx Name\n");
 		for (int i = 0; i < nb_symbole; i++)
 		{
 			fread(&sym, 1, sizeof(sym), elfFile);
 			find_type_sym(ELF32_ST_TYPE(sym.st_info), type);
 			find_bind_symb(ELF32_ST_BIND(sym.st_info), bind);
+			find_visibility(ELF32_ST_VISIBILITY(sym.st_other), vis);
 			find_name_symb(strtab, name, sym.st_name);
 			find_ndx_symb(sym.st_shndx, ndx);
-			printf("    %3d:   %08x      %-8d             %-8s       %-8s      %s   %s \n", i, sym.st_value, sym.st_size, type, bind, ndx, name);
+			printf("    %3d: %08x %-3d %-8s %-8s %s %s  %s  \n", i, sym.st_value, sym.st_size, type, bind,vis, ndx, name);
 		}
 	}
 
 	printf("\n");
 
-	if (nb > 1)
-	{
-		fseek(elfFile, dynsym.header.sh_offset, SEEK_SET);
-		uint32_t nb_symbole = dynsym.header.sh_size / dynsym.header.sh_entsize;
-		printf("Symbol table '%s' contains %d entries:\n", dynsym.name, nb_symbole);
-		printf("   Num:    Value               Size                   Type            Bind       Ndx Name\n");
-		for (int i = 0; i < nb_symbole; i++)
-		{
-			fread(&sym, 1, sizeof(sym), elfFile);
-			find_type_sym(ELF32_ST_TYPE(sym.st_info), type);
-			find_bind_symb(ELF32_ST_BIND(sym.st_info), bind);
-			find_name_symb(dynstr, name, sym.st_name);
-			find_ndx_symb(sym.st_shndx, ndx);
-			printf("    %3d:   %08x      %-8d             %-8s       %-8s      %s   %s \n", i, sym.st_value, sym.st_size, type, bind, ndx, name);
-		}
-	}
+	
 }
 
 void affiche_table_sym(SectionsList liste, FILE *elfFile)

@@ -8,6 +8,7 @@
 #define ELF32_ST_BIND(i) ((i) >> 4)
 #define ELF32_ST_TYPE(i) ((i)&0xf)
 #define ELF32_ST_INFO(b, t) (((b) << 4) + ((t)&0xf))
+#define ELF32_ST_VISIBILITY(o) ((o)&0x3)
 
 typedef enum
 {
@@ -35,6 +36,8 @@ typedef struct
 } table_sym;
 
 TYPE_SYMB find_type_symbole(int num);
+
+void find_visibility(int num,char *vis);
 
 void affiche_symboles(FILE *elfFile, Elf32_Ehdr header);
 
