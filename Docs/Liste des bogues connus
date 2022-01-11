@@ -1,0 +1,22 @@
+LISTE DES BOGUES CONNUS : 
+
+Etape 3 : 
+Lorsque l'on lance nos tests sur des fichiers exécutables (comme readelf), 
+il se peut qu'une section soit différente du résultat attendu entre la fonction UNIX readelf et notre programme.
+Cependant cette erreur se déroule uniquement sur les fichiers exécutables et une fois parmi 4 ou 5 fichiers différents
+
+Exemple : 
+    Test affichage section 24 : Identique
+    Test affichage section 25 : Identique
+    Test affichage section 26 : Different
+1,4c1
+< 
+< Hex dump of section '.bss':
+<   0x00008008 4743433a 
+< 
+---
+> Section '.bss' has no data to dump.
+Test affichage section 27 : Identique
+Test affichage section 28 : Identique
+
+La fonction UNIX renvoie une section vide, mais nous lisons une section contenant des informations

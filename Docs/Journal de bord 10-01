@@ -1,0 +1,21 @@
+Journal de bord 10/01 : 
+
+- Avancement sur l'étape 4, 5, 6 et 7
+- Réimplémentation des tests, documentation et options UNIX
+- Passage en 32 bits sur l'ensemble du projet
+
+    * Le passage en 32 bits a régressé le développement de l'étape 4, mais il ne manque plus que les noms des symboles pour avoir fini
+    cette étape 
+    * L'étape 5 est passée en version 32 bits mais n'a pas été très avancée, le  groupe s'étant concentré sur l'étape 4
+    * L'étape 6 a été développée par Sacha et Faroq, et le copiage du fichier elf est résolu, il ne manque plus que les modifications
+    * Durant le week-end le passage en 32 bits a été implémenté sur la totalité du projet
+    * Les tests et la documentation sont à jour sur les étapes 1, 2, 3, et la partie 6 (4 et 5 étant amnenées à changer)
+    * La partie 7 avance en parallèle avec Mathias et Raphaël
+
+        Nos objectifs pour demain sont donc :   
+    - Sacha : Documentation, tests, options, et travail sur l'étape 6 
+    - Landry et Dorian : Avancement sur les étapes 4 et 5
+    - Faroq : Finalisation de l’étape 6, et éventuellement travail sur l’étape 7
+    - Mathias et Raphaël : Avancement sur l'étape 7
+
+    (Landry est cas contact et travaille de chez lui)
