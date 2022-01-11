@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../Phase1/readelfHeader.h"
-#include "../Phase1/readelfSectTable.h"
-#include "../Phase1/readelfSectLect.h"
-#include "../Phase1/readelfSymbTable.h"
-#include "../Phase1/readelfReimpTable.h"
+#include "readelfHeader.h"
+#include "readelfSectTable.h"
+#include "readelfSectLect.h"
+#include "readelfSymbTable.h"
+#include "readelfReimpTable.h"
 
 /* Creer une copie conforme d'un fichier elf */
 
@@ -74,12 +74,12 @@ int main(int argc, char *argv[])
 	SectionsList liste_sections = lire_sections_table(elfFile, header);
 	lire_sections(elfFile, liste_sections);
 	uint8_t *programs_table = lire_programs_table(elfFile, header, liste_sections);
-	//struct = lire_symboles_table(elfFile, liste_sections); // etape 4
-	//struct = lire_reimp_table(elfFile, liste_sections); // etape 5
+	SymbolesList liste_symboles= lire_symboles_table(liste_sections);
+	//ReimpList liste_reimp = lire_reimp_table(liste_sections); // etape 5
 	
 	// Ecriture dans le fichier outFile
-	//ecrire_symb_tables(outFile, struct); // etape 4
-	//ecrire_reimp_table(outFile, struct); // etape 5
+	ecrire_symboles_table(liste_sections, liste_symboles);
+	//ecrire_reimp_table(liste_sections, liste_reimp); // etape 5
 	ecrire_entete(outFile, header);
 	ecrire_programs_table(outFile, programs_table);
 	ecrire_sections(outFile, liste_sections, header.e_shoff);

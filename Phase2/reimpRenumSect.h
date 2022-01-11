@@ -22,7 +22,7 @@ typedef struct
 
 
 /*******************************************************************************
- * renommer_sections
+ * renumeroter_sections
  * parametres : Elf32_Ehdr header, SectionsList liste
  * resultat : aucun
  * description : Modifie les structures donnees selon l'etape 6.
