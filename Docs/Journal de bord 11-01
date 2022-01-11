@@ -1,15 +1,14 @@
 Journal de bord 11/01 : 
 
-- Complétion de l'étape 4 et 5
+- Complétion de l'étape 4 et 5 (sauf lecture des symboles)
 - Ajout des tests sur ces deux parties, documentation, fin de la phase 1
 - Avancement sur les étapes 6 et 7
 
-    * L'étape 4 a été complétée, le problème des noms de symboles résolu, ainsi que l'étape 5 par Landry, Dorian, Sacha et Faroq
-    * Cependant la séparation lecture/écriture n'est pas encore réalisée, peut-être que nous n'allons pas avoir assez de temps pour l'implémenter
-    * Les tests, la documentation, et les documents annexes sont complétés, la phase 1 est "finie"
-    * L'étape 6 a été avancée, ainsi que l'étape 7
+    * L'étape 4 a été complétée, ainsi que l'étape 5 (excepté le problème du nom de symbole) par Landry, Dorian, Sacha et Faroq
+    * Cependant la séparation lecture/écriture n'est pas encore réalisée sur l'étape 5 peut-être que nous n'allons pas avoir assez de temps pour l'implémenter
+    * L'étape 6 a été avancée (partie modification de fichier), ainsi que l'étape 7
     * Objectif de fin de projet : Au moins finir l'étape 7 voire 8, commencer la 9 
-        Quitte à ne pas être allé jusqu'au bout, nous aurons une base de projet solide
+        Quitte à ne pas être allé jusqu'au bout, nous aurons une base de projet solide 
     
 
     Nos objectifs pour demain sont donc :   
