@@ -68,11 +68,10 @@ int main(int argc, char *argv[])
 			// Lecture et affichage de la table de reimplantation si l'option '-r' est activee
 			if (opt.r)
 			{
-				// ReimplantationList liste_reimp = lire_reimp_table(liste_sections);
-				// afficher_reimp_table(liste_reimp);
-				// supprimer_reimp_table(liste_reimp);
+				RelocTable table_reimp = lire_reimp_table(liste_sections);
+				afficher_reimp_table(table_reimp);
+				supprimer_reimp_table(table_reimp);
 			}
-			
 			
 			// Affichage du contenu des sections si l'option '-x' est activee
 			if (opt.nb_sect > 0)

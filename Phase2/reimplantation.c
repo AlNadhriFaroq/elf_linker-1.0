@@ -76,18 +76,18 @@ int main(int argc, char *argv[])
 	SectionsList liste_sections = lire_sections_table(elfFile, header);
 	lire_sections(elfFile, liste_sections);
 	uint8_t *programs_table = lire_programs_table(elfFile, header, liste_sections);
-	//struct = lire_symboles_table(elfFile, header); // etape 4
-	//struct = lire_reimp_table(elfFile, header); // etape 5
+	SymbolesList liste_symboles = lire_symboles_table(liste_sections);
+	//ReimpList liste_reimp = lire_reimp_table(liste_sections); // etape 5
 	
 	// Fonctions de modification des structures precedemment definies
-	//renommer_sections(header, liste_sections); // etape 6
+	renumeroter_sections(header, liste_sections);
 	//corriger_symboles(liste_sections); // etape 7
 	//reimplanter_type_abs(header, liste_sections, struct); // etape 8
 	//Reimplanter_type_jump_call(header, liste_sections, struct); // etape 9
 	
 	// Ecriture dans le fichier de destination outFile
-	//ecrire_symb_table(liste_sections, struct); // etape 4
-	//ecrire_reimp_table(liste_sections, struct); // etape 5
+	ecrire_symboles_table(liste_sections, liste_symboles);
+	//ecrire_reimp_table(liste_sections, liste_reimp); // etape 5
 	ecrire_entete(outFile, header);
 	ecrire_programs_table(outFile, programs_table);
 	ecrire_sections(outFile, liste_sections, header.e_shoff);
