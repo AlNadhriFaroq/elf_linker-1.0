@@ -92,7 +92,9 @@ int main(int argc, char *argv[])
 	ecrire_programs_table(outFile, programs_table);
 	ecrire_sections(outFile, liste_sections, header.e_shoff);
 	ecrire_sections_table(outFile, liste_sections);
-	
+
+	renumeroter_sections(header, liste_sections);
+
 	supprimer_sections_table(liste_sections);
 	fclose(elfFile);
 	fclose(outFile);
