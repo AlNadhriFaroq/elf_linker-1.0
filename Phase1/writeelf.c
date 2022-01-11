@@ -9,6 +9,31 @@
 /* Creer une copie conforme d'un fichier elf */
 
 
+static uint8_t *lire_programs_table(FILE *elfFile, Elf32_Ehdr header, SectionsList liste)
+{
+	uint8_t *programs_table = NULL;
+	int size = liste.sectTab[1].header.sh_offset - header.e_ehsize;
+	
+	if (size != 0)
+	{
+		programs_table = malloc(size);
+		fread(programs_table, 1, size, elfFile);
+	}
+	
+	return programs_table;
+}
+
+
+static void ecrire_programs_table(FILE *outFile, uint8_t *programs_table)
+{
+	if (programs_table != NULL)
+	{
+		fwrite(programs_table, 1, sizeof(programs_table), outFile);
+		free(programs_table);
+	}
+}
+
+
 int main(int argc, char *argv[])
 {
 	if (argc != 3)
@@ -48,15 +73,16 @@ int main(int argc, char *argv[])
 	// Lecture du fichier elfFile
 	SectionsList liste_sections = lire_sections_table(elfFile, header);
 	lire_sections(elfFile, liste_sections);
+	uint8_t *programs_table = lire_programs_table(elfFile, header, liste_sections);
 	//struct = lire_symboles_table(elfFile, liste_sections); // etape 4
 	//struct = lire_reimp_table(elfFile, liste_sections); // etape 5
 	
 	// Ecriture dans le fichier outFile
-	//ecrire_symboles_tables(outFile, struct); // etape 4
+	//ecrire_symb_tables(outFile, struct); // etape 4
 	//ecrire_reimp_table(outFile, struct); // etape 5
 	ecrire_entete(outFile, header);
-	// ecrire la table des programmes (ce qu'il y a entre la fin de l'en-tete et le debut du contenu de la premiere section
-	ecrire_sections(outFile, liste_sections);
+	ecrire_programs_table(outFile, programs_table);
+	ecrire_sections(outFile, liste_sections, header.e_shoff);
 	ecrire_sections_table(outFile, liste_sections);
 	
 	supprimer_sections_table(liste_sections);

@@ -19,7 +19,9 @@ function tests()
 {	if [[ -e $1 ]]
 	then
 		test_ecriture $1 $2
-		rm $2
+		hexdump $1 > fileIn.txt
+		hexdump $2 > fileOut.txt
+		rm $2 fileIn.txt fileOut.txt
 	else
 		echo "Error: File '$1' not find"
 	fi

@@ -72,12 +72,12 @@ void ecrire_section(FILE *outFile, Section Sect);
 
 /*******************************************************************************
  * ecrire_sections
- * parametres : FILE *outFile, SectionsList liste 
+ * parametres : FILE *outFile, SectionsList liste_sections , uint32_t e_shoff
  * resultat : aucun
  * description : Ecrit dans le fichier outFile les contenus des sections de la
  *               table des sections definie dans la structure liste.
  * effet de bord : Ecrit dans le fichier
  *******************************************************************************/
-void ecrire_sections(FILE *outFile, SectionsList liste);
+void ecrire_sections(FILE *outFile, SectionsList liste_sections, uint32_t e_shoff);
 
 #endif

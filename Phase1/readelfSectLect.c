@@ -21,6 +21,31 @@ static int strComp(const void *chaine1, const void *chaine2)
 }
 
 
+/*	adrComp(const void *chaine1, const void *chaine2)
+		Compare les deux adresses des sections donnees
+*/
+static int adrComp(const void *S1, const void *S2)
+{
+	Section *sect1 = (Section *) S1;
+	Section *sect2 = (Section *) S2;
+    uint32_t adr1 = sect1->header.sh_offset;
+	uint32_t adr2 = sect2->header.sh_offset;
+	if (adr1 == adr2)
+	{
+		return 0;
+	}
+	if (adr1 > adr2)
+	{
+		return 1;
+	}
+	if (adr1 < adr2)
+	{
+		return -1;
+	}
+	return -2;
+}
+
+
 /*	trier_sections(Options *Opt, SectionsList liste)
 		Renomme, trie et supprime les doublons de Opt.sectList
 */
@@ -221,14 +246,47 @@ void ecrire_section(FILE *outFile, Section sect)
 }
 
 
-/*	ecrire_sections(FILE *outFile, SectionsList liste)
+/*	ecrire_sections(FILE *outFile, SectionsList liste_sections, uint32_t e_shoff)
 		Ecrit le contenu d'une liste de sections dans le fichier
 */
-void ecrire_sections(FILE *outFile, SectionsList liste)
+void ecrire_sections(FILE *outFile, SectionsList liste_sections, uint32_t e_shoff)
 {
+	// Copie de la liste des sections pour pouvoir la changer sans changer l'original
+	SectionsList liste = liste_sections;
+	liste.sectTab = malloc(sizeof(Section) * liste.nb_sect);
+	liste.sectTab = memcpy(liste.sectTab, liste_sections.sectTab, sizeof(Section)*liste_sections.nb_sect);
+	
+	// Tri des sections dans l'ordre des adresses croissantes
+	qsort(liste.sectTab, liste.nb_sect, sizeof(Section), adrComp);
+	
 	// Parcours des sections
-	for (int i = 0; i < liste.nb_sect; i++)
+	for (int i = 1; i < liste.nb_sect; i++)
 	{
+		// Ecriture du contenu de la section courante
 		ecrire_section(outFile, liste.sectTab[i]);
+		
+		// Calcul de l'ecart avec la section suivante
+		int ecart = 0;
+		if (i+1 < liste.nb_sect)
+		{
+			ecart = liste.sectTab[i+1].header.sh_offset -(liste.sectTab[i].header.sh_offset + liste.sectTab[i].header.sh_size);
+		}
+		else if (i+1 == liste.nb_sect)
+		{
+			ecart = e_shoff -(liste.sectTab[i].header.sh_offset + liste.sectTab[i].header.sh_size);
+		}
+		
+		// Cas ou il y a un ecart
+		if (ecart != 0)
+		{
+			// Remplissage de cette ecart
+			for (int j = 0; j < ecart; j++)
+			{
+				char *c = 0x0;
+				fwrite(&c, 1, sizeof(char), outFile);
+			}
+		}
 	}
+	
+	free(liste.sectTab);
 }
