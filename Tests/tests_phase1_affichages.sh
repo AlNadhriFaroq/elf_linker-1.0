@@ -116,7 +116,7 @@ function tests()
 		test_header $1
 		test_sect_table $1
 		test_sections $1
-		#test_symb_table $1
+		test_symb_table $1
 		#test_reimp_table $1
 		rm resultat_projet.txt resultat_fourni.txt resultat_projet_temp.txt resultat_fourni_temp.txt
 	else

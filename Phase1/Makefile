@@ -1,7 +1,7 @@
 CC=gcc -m32
 CFLAGS= -Wall -Werror -g
 
-all: readelf
+all: readelf writeelf
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<

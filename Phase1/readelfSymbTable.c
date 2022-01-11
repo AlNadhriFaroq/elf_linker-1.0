@@ -1,60 +1,29 @@
-#include "readelfSymbTable.h"
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "readelfSectTable.h"
+#include "readelfSymbTable.h"
 
-void find_ndx_symb(uint16_t ndx, char *name)
+
+static void lire_name(Section strSect, uint32_t st_name, char *name)
 {
-	switch (ndx)
+	int i = 0;
+
+	while (strSect.dataTab[st_name] != 0)
 	{
-	case 0:
-		strcpy(name, "UND");
-		break;
-	case 65521:
-		strcpy(name, "ABS");
-		break;
-	default:
-		sprintf(name, "%d", ndx);
-		break;
+		name[i] = strSect.dataTab[st_name];
+		st_name++;
+		i++;
 	}
+	name[i] = '\0';
 }
 
-void find_bind_symb(int number, char *name)
-{
-	switch (number)
-	{
-	case 0:
-		strcpy(name, "LOCAL");
-		break;
-	case 1:
-		strcpy(name, "GLOBAL");
-		break;
-	case 2:
-		strcpy(name, "WEAK");
-		break;
-	case 10:
-		strcpy(name, "LOOS");
-		break;
-	case 12:
-		strcpy(name, "HIOS");
-		break;
-	case 13:
-		strcpy(name, "LOPROC");
-		break;
-	case 15:
-		strcpy(name, "HIPROC");
-		break;
 
-	default:
-		break;
-	}
-}
-
-void find_type_sym(uint32_t value, char *type)
+static void lire_type(int st_info, char *type)
 {
-	switch (value)
+	switch (st_info)
 	{
 	case 0:
 		strcpy(type, "NOTYPE");
@@ -66,7 +35,7 @@ void find_type_sym(uint32_t value, char *type)
 		strcpy(type, "FUNC");
 		break;
 	case 3:
-		strcpy(type, "Section");
+		strcpy(type, "SECTION");
 		break;
 	case 4:
 		strcpy(type, "FILE");
@@ -94,130 +63,189 @@ void find_type_sym(uint32_t value, char *type)
 	}
 }
 
-TYPE_SYMB find_type_symbole(int num)
+
+static void lire_bind(int st_info, char *bind)
 {
-	switch (num)
+	switch (st_info)
 	{
+	case 0:
+		strcpy(bind, "LOCAL");
+		break;
+	case 1:
+		strcpy(bind, "GLOBAL");
+		break;
 	case 2:
-		return SYMTAB;
-	case 11:
-		return DYNSYM;
-	case 3:
-		return STRTAB;
+		strcpy(bind, "WEAK");
+		break;
+	case 10:
+		strcpy(bind, "LOOS");
+		break;
+	case 12:
+		strcpy(bind, "HIOS");
+		break;
+	case 13:
+		strcpy(bind, "LOPROC");
+		break;
+	case 15:
+		strcpy(bind, "HIPROC");
+		break;
 	default:
-		return OTHER_SYMB;
+		break;
 	}
 }
 
-void find_visibility(int num,char *vis){
-	switch(num){
-		case 1:
-			strcpy(vis,"INTERNAL");
-			break;
-		case 2:
-			strcpy(vis, "HIDDEN");
-			break;
-		case 3:
-			strcpy(vis,"PROTECTED");
-			break;
-		default:
-			strcpy(vis, "DEFAULT");
-			break;
-	}
-}
 
-void find_name_symb(Section strtab, char *name, uint32_t debut_mot)
+static void lire_vis(int st_other, char *vis)
 {
-	int i = 0;
-
-	while (strtab.dataTab [debut_mot] != 0)
+	switch (st_other)
 	{
-		name[i] = strtab.dataTab [debut_mot];
-		debut_mot++;
-		i++;
+	case 1:
+		strcpy(vis,"INTERNAL");
+		break;
+	case 2:
+		strcpy(vis, "HIDDEN");
+		break;
+	case 3:
+		strcpy(vis,"PROTECTED");
+		break;
+	default:
+		strcpy(vis, "DEFAULT");
+		break;
 	}
-	name[i] = '\0';
 }
 
-void affiche_sym(Section strtab, Section symtab, Section dynsym, Section dynstr, uint8_t nb, FILE *elfFile)
+
+static void lire_ndx(uint16_t st_shndx, char *ndx)
 {
-	char type[10];
-	char bind[10];
-	char vis[10];
-	char name[50];
-	char ndx[16];
-	Elf32_Sym sym;
-	if (nb > 1)
+	switch (st_shndx)
 	{
-		fseek(elfFile, dynsym.header.sh_offset, SEEK_SET);
-		uint32_t nb_symbole = dynsym.header.sh_size / dynsym.header.sh_entsize;
-		printf("Symbol table '%s' contains %d entries:\n", dynsym.name, nb_symbole);
-		printf("   Num:    Value  Size Type    Bind   Vis      Ndx Name\n");
-		for (int i = 0; i < nb_symbole; i++)
+	case 0:
+		strcpy(ndx, "UND");
+		break;
+	case 65521:
+		strcpy(ndx, "ABS");
+		break;
+	default:
+		sprintf(ndx, "%d", st_shndx);
+		break;
+	}
+}
+
+
+Symbole lire_symbole(Section symSect, Section strSect, int i)
+{
+	Symbole symbole = {"", "", "", "", "", {0}};
+	
+	symbole.symb.st_name  = *((uint32_t *) &(symSect.dataTab[i*16]));
+	symbole.symb.st_value = *((uint32_t *) &(symSect.dataTab[i*16+4])); 
+	symbole.symb.st_size  = *((uint32_t *) &(symSect.dataTab[i*16+8])); 
+	symbole.symb.st_info  = *((uint8_t *)  &(symSect.dataTab[i*16+12])); 
+	symbole.symb.st_other = *((uint8_t *)  &(symSect.dataTab[i*16+13])); 
+	symbole.symb.st_shndx = *((uint16_t *) &(symSect.dataTab[i*16+14]));
+	
+	lire_name(strSect, symbole.symb.st_name, symbole.name);
+	lire_type(ELF32_ST_TYPE(symbole.symb.st_info), symbole.type);
+	lire_bind(ELF32_ST_BIND(symbole.symb.st_info), symbole.bind);
+	lire_vis(ELF32_ST_VISIBILITY(symbole.symb.st_other), symbole.vis);
+	lire_ndx(symbole.symb.st_shndx, symbole.ndx);
+
+	return symbole;
+}
+
+
+SymbolesList lire_symboles_table(SectionsList liste_sect)
+{
+	Section strtab, symtab, dynsym, dynstr;
+	SymbolesList liste_symb = {0, NULL, 0, NULL};
+	
+	int nb = 0;
+	for (int i = 0; i < liste_sect.nb_sect; i++)
+	{
+		Section sect = liste_sect.sectTab[i];
+		if (sect.header.sh_type == 11)
 		{
-			fread(&sym, 1, sizeof(sym), elfFile);
-			find_type_sym(ELF32_ST_TYPE(sym.st_info), type);
-			find_bind_symb(ELF32_ST_BIND(sym.st_info), bind);
-			find_visibility(ELF32_ST_VISIBILITY(sym.st_other),vis);
-			find_name_symb(dynstr, name, sym.st_name);
-			find_ndx_symb(sym.st_shndx, ndx);
-			printf("    %3d: %08x %-3d %-8s %-8s %s %s  %s \n", i, sym.st_value, sym.st_size, type, bind,vis, ndx, name);
+			dynsym = sect;
+			nb++;
+		}
+		else if (sect.header.sh_type == 2)
+		{
+			symtab = sect;
+			nb++;
+		}
+		else if (strcmp(sect.name, ".strtab") == 0)
+		{
+			strtab = sect;
+		}
+		else if (strcmp(sect.name, ".dynstr") == 0)
+		{
+			dynstr = sect;
 		}
 	}
-	printf("\n");
+	
+	if (nb > 1)
+	{
+		liste_symb.nb_symbDyn = dynsym.header.sh_size / dynsym.header.sh_entsize;
+		liste_symb.symbDynTab = malloc(sizeof(Symbole) * liste_symb.nb_symbDyn);
+
+		for (int i = 0; i < liste_symb.nb_symbDyn; i++)
+		{
+			liste_symb.symbDynTab[i] = lire_symbole(dynsym, dynstr, i);
+		}
+	}
 
 	if (nb >= 1)
 	{
-		// printf("%lx\n", symtab.sec.sh_offset);
-		fseek(elfFile, symtab.header.sh_offset, SEEK_SET);
-		uint32_t nb_symbole = symtab.header.sh_size / symtab.header.sh_entsize;
-		printf("Symbol table '%s' contains %d entries:\n", symtab.name, nb_symbole);
-		printf("     Num:    Value  Size Type    Bind   Vis      Ndx Name\n");
-		for (int i = 0; i < nb_symbole; i++)
+		liste_symb.nb_symb = symtab.header.sh_size / symtab.header.sh_entsize;
+		liste_symb.symbTab = malloc(sizeof(Symbole) * liste_symb.nb_symb);
+		
+		for (int i = 0; i < liste_symb.nb_symb; i++)
 		{
-			fread(&sym, 1, sizeof(sym), elfFile);
-			find_type_sym(ELF32_ST_TYPE(sym.st_info), type);
-			find_bind_symb(ELF32_ST_BIND(sym.st_info), bind);
-			find_visibility(ELF32_ST_VISIBILITY(sym.st_other), vis);
-			find_name_symb(strtab, name, sym.st_name);
-			find_ndx_symb(sym.st_shndx, ndx);
-			printf("    %3d: %08x %-3d %-8s %-8s %s %s  %s  \n", i, sym.st_value, sym.st_size, type, bind,vis, ndx, name);
+			liste_symb.symbTab[i] = lire_symbole(symtab, strtab, i);
 		}
 	}
 
-	printf("\n");
-
-	
+	return liste_symb;
 }
 
-void affiche_table_sym(SectionsList liste, FILE *elfFile)
+
+void afficher_symboles(char *nom, Symbole *symboles, int nb_symb)
 {
-	Section strtab, symtab, dynsym, dynstr;
-	uint8_t nb = 0;
-	for (int i = 0; i < liste.nb_sect; i++)
+	printf("\nSymbol table '%s' contains %d entries:\n", nom, nb_symb);
+	printf("   Num:    Value  Size Type    Bind   Vis      Ndx Name\n");
+		
+	for (int i = 0; i < nb_symb; i++)
 	{
-		if (find_type_symbole(liste.sectTab[i].header.sh_type) == DYNSYM)
-		{
-			dynsym = liste.sectTab[i];
-			nb++;
-		}
-		else if (find_type_symbole(liste.sectTab[i].header.sh_type) == SYMTAB)
-		{
-			symtab = liste.sectTab[i];
-			nb++;
-		}
-		else if (strcmp(liste.sectTab[i].name, ".strtab") == 0)
-		{
-			strtab = liste.sectTab[i];
-		}
-		else if (strcmp(liste.sectTab[i].name, ".dynstr") == 0)
-		{
-			dynstr = liste.sectTab[i];
-		}
-		else
-		{
-			continue;
-		}
+		Symbole s = symboles[i];
+		printf("   %3d: %08x %5d %-7s %-6s %-8s %3s %s\n",
+			   i, s.symb.st_value, s.symb.st_size,
+			   s.type, s.bind, s.vis, s.ndx, s.name);
 	}
-	affiche_sym(strtab, symtab, dynsym, dynstr, nb, elfFile);
 }
+
+
+void afficher_symboles_table(SymbolesList liste)
+{
+	if (liste.nb_symbDyn > 0)
+	{
+		afficher_symboles(".dynsym", liste.symbDynTab, liste.nb_symbDyn);
+	}
+
+	if (liste.nb_symb > 0)
+	{
+		afficher_symboles(".symtab", liste.symbTab, liste.nb_symb);
+	}	
+}
+
+
+void ecrire_symboles_table(SectionsList liste_sect, SymbolesList liste_symb)
+{
+	// Ecrit dans le contenu des sections correspondantes (dynsym, symtab, dynstr, strtab) le contenu de la table des symboles
+}
+
+
+void supprimer_symboles_table(SymbolesList liste)
+{
+	free(liste.symbTab);
+	free(liste.symbDynTab);
+}
+
