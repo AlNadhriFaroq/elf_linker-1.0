@@ -48,6 +48,9 @@ int main(int argc, char *argv[])
 			// Lecture de la table des sections du fichier
 			SectionsList liste_sections = lire_sections_table(elfFile, header);
 			
+			// Lecture du contenu des sections
+			lire_sections(elfFile, liste_sections);
+			
 			// Affichage de la table des sections si l'option '-S' est activee
 			if (opt.S)
 			{
@@ -57,28 +60,25 @@ int main(int argc, char *argv[])
 			// Lecture et affichage de la table des symboles si l'option '-s' est activee
 			if (opt.s)
 			{
-				// struct = lire_symboles_table(elfFile, header);
-				// afficher_symboles_tables(struct);
-				affiche_table_sym(liste_sections, elfFile);
+				SymbolesList liste_symboles = lire_symboles_table(liste_sections);
+				afficher_symboles_table(liste_symboles);
+				supprimer_symboles_table(liste_symboles);
 			}
 			
 			// Lecture et affichage de la table de reimplantation si l'option '-r' est activee
 			if (opt.r)
 			{
-				// struct = lire_reimp_table(elfFile, header);
-				// afficher_reimp_table(struct);
-				affiche_reimplantation_table(liste_sections, elfFile, header.e_type);
+				// ReimplantationList liste_reimp = lire_reimp_table(liste_sections);
+				// afficher_reimp_table(liste_reimp);
+				// supprimer_reimp_table(liste_reimp);
 			}
 			
 			
-			// Lecture et affichage du contenu des sections si l'option '-x' est activee
+			// Affichage du contenu des sections si l'option '-x' est activee
 			if (opt.nb_sect > 0)
 			{
 				// Renommage, tri et suppression des doublons de Opt.sectList
-				trier_sections(&opt, liste_sections);
-				
-				// Lecture du contenu des sections
-				lire_sections(elfFile, liste_sections);
+				trier_sections(&opt, liste_sections);	
 				
 				// Affichage du contenu des sections voulues
 				afficher_sections(liste_sections, opt);
