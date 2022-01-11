@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 			{
 				// struct = lire_symboles_table(elfFile, header);
 				// afficher_symboles_tables(struct);
+				affiche_table_sym(liste_sections, elfFile);
 			}
 			
 			// Lecture et affichage de la table de reimplantation si l'option '-r' est activee
@@ -66,6 +67,7 @@ int main(int argc, char *argv[])
 			{
 				// struct = lire_reimp_table(elfFile, header);
 				// afficher_reimp_table(struct);
+				affiche_reimplantation_table(liste_sections, elfFile, header.e_type);
 			}
 			
 			
