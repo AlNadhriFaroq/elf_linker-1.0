@@ -1,0 +1,43 @@
+LISTE DES BOGUES CONNUS : 
+
+Etape 3 : 
+Lorsque l'on lance nos tests sur des fichiers exécutables (comme readelf), 
+il se peut qu'une section soit différente du résultat attendu entre la fonction UNIX readelf et notre programme.
+Cependant cette erreur se déroule uniquement sur les fichiers exécutables et une fois parmi 4 ou 5 fichiers différents
+
+Exemple : 
+    Test affichage section 24 : Identique
+    Test affichage section 25 : Identique
+    Test affichage section 26 : Different
+1,4c1
+< 
+< Hex dump of section '.bss':
+<   0x00008008 4743433a 
+< 
+---
+> Section '.bss' has no data to dump.
+Test affichage section 27 : Identique
+Test affichage section 28 : Identique
+
+La fonction UNIX renvoie une section vide, mais nous lisons une section contenant des informations
+
+
+Etape 4 et 5 :
+Lorsque l'on lance nos tests sur des fichiers exécutables (comme readelf),
+la table des symboles et la table de réimplémentation ne sont pas identiques.
+Cela est dû à l'ajout derrière le nom des symboles (dans les deux tables) le numéro de version du symbole.
+Il y a également un problème de taille de chaîne de caractères sur le nom des symboles.
+
+Exemple : 
+TEST AFFICHAGE TABLE DES SYMBOLES : DIFFERENT
+5,19c5,19
+<      1: 00000000     0 FUNC    GLOBAL DEFAULT  UND strcmp
+<      2: 00000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterTMCloneTable
+<      3: 00000000     0 FUNC    GLOBAL DEFAULT  UND printf
+---
+>      1: 00000000     0 FUNC    GLOBAL DEFAULT  UND strcmp@GLIBC_2.0 (2)
+>      2: 00000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterTMCloneTab
+>      3: 00000000     0 FUNC    GLOBAL DEFAULT  UND printf@GLIBC_2.0 (2)
+
+Le problème pourrait être résolu si on enlevait pour chaque nom la valeur de la version, et en modifiant
+la taille du nom des symboles, mais le résultat obtenu reste celui attendu par la version UNIX de readelf.

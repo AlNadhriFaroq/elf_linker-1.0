@@ -1,0 +1,39 @@
+LISTE DES FONCTIONNALITES : 
+
+Point de vue global du projet :
+Structuration des parties code, tests, documentation
+Séparation des fichiers en Lecture/écriture
+Gestion des options (-h -s -S -r -x) respectant la norme UNIX
+Compilation en 32 bits selon le sujet du projet, mais la gestion du boutisme n'a pas été implémentée
+
+Phase 1 : complétée
+Etape 1 : Lecture du header
+Etape 2 : Lecture de la table des sections
+Etape 3 : Lecture du contenu d'un section choisie
+Etape 4 : Lecture du contenu de la table des symboles (SYMTAB et DYNTAB)
+Etape 5 : Lecture des tables de réimplémentations
+
+Phase 2 : Avancement 
+Etape 6 : Suppression des sections de réimplémentation 
+Etape 7 : Travail en cours sur la modification des symboles 
+Etape 8 : Aucun développement 
+Etape 9 : Aucun développement
+Etape 10 : Aucun développement
+Etape 11 : Aucun développement
+
+
+Utilisation des fonctionnalités : 
+Phase 1 : dans le dossier courant Phase1, utiliser make, puis les commandes suivantes :
+Etape 1 : ./readelf -h <fichier>
+Etape 2 : ./readelf -S <fichier>
+Etape 3 : ./readelf -x <numero ou nom d'une section> <fichier>
+Etape 4 : ./readelf -s <fichier>
+Etape 5 : ./readelf -r <fichier>
+
+Phase 2 : dans le dossier courant Phase2, utiliser make, puis les commandes suivantes :
+Etape 6 : ./reimp <fichier> <fichier resultat>
+Etape 7 : 
+
+Tests : dans le dossier courant Tests, utiliser les commandes suivantes : 
+Phase 1 : bash tests_phase1_affichages.sh <fichier> (lancement automatique des étapes 1 à 5)
+Phase 1 : bash tests_phase1_ecritures.sh <fichier> <fichier> (comparaison entre deux fichiers)

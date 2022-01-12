@@ -46,7 +46,44 @@ Exemple :
 bash tests_phase1_affichages.sh ../Phase1/readelf.o
 bash tests_phase1_affichages.sh ../Phase1/readelf
 
-Conclusion : Si le test est réussi, alors on affiche pour chaque section "Test affichage section X : Identique" (X étant le numéro de section)
+Conclusion : Si le test est réussi, alors on affiche pour chaque section :
+"Test affichage section X : Identique" (X étant le numéro de section)
 Sinon, on affiche "Test affichage section 1 : Différent" avec les lignes qui ne sont pas identiques.
+
+Etape 4 : 
+
+Objectif : Comparer l'affichage des informations contenues dans la table des symboles par notre programme 
+        comparé aux informations données par la fonction UNIX readelf -s
+
+Marche à suivre : Test automatisé sur l'ensemble de la Phase 1
+L'appel au test se fait avec la commande suivante dans le dossier courant Tests :
+bash tests_phase1_affichages.sh <fichier>
+
+Exemple :
+bash tests_phase1_affichages.sh ../Phase1/readelf.o
+bash tests_phase1_affichages.sh ../Phase1/readelf
+
+Conclusion : Si le test est réussi, alors on affiche pour chaque section :
+"TEST AFFICHAGE TABLE DES SYMBOLES : IDENTIQUE"
+Sinon, on affiche "TEST AFFICHAGE TABLE DES SYMBOLES : DIFFERENT" avec les lignes qui ne sont pas identiques.
+
+Etape 5 : 
+
+Objectif : Comparer l'affichage des informations contenues dans les tables de réimplémentation 
+        par notre programme comparé aux informations données par la fonction UNIX readelf -r
+
+Marche à suivre : Test automatisé sur l'ensemble de la Phase 1
+L'appel au test se fait avec la commande suivante dans le dossier courant Tests :
+bash tests_phase1_affichages.sh <fichier>
+
+Exemple :
+bash tests_phase1_affichages.sh ../Phase1/readelf.o
+bash tests_phase1_affichages.sh ../Phase1/readelf
+
+Conclusion : Si le test est réussi, alors on affiche pour chaque section 
+"TEST AFFICHAGE TABLE DE REIMPLANTATION : IDENTIQUE"
+Sinon, on affiche "TEST AFFICHAGE TABLE DE REIMPLANTATION : DIFFERENT" 
+avec les lignes qui ne sont pas identiques.
+
 
 

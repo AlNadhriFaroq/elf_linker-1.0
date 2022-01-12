@@ -1,0 +1,23 @@
+Journal de bord 12/01 : 
+
+- Fin de la phase 1 (code, tests, documentation spécification)
+- Complétion de l'étape 6
+- Merge de l'étape 7 dans le groupe, et avancement
+
+    * Le problème de nom de symbole a été résolu, la phase 1 est terminée
+    * La documentation, les tests et les spécifications ont été ajoutés par Sacha et Dorian
+
+    * L'étape 6 a été finie par Faroq, Sacha et Landry
+    * Objectif de fin de projet : Au moins avoir une version aboutie de l'étape 7,
+        voire quelques pistes sur l'étape 8.
+        Quitte à ne pas être allé jusqu'au bout, nous aurons une base de projet solide.
+    
+
+    Nos objectifs pour le rendu sont :   
+    - Dorian : Revoir les documents annexes, créer des schémas et vérifier la spécification du code
+    - Sacha : Vérifier le fonctionnement des tests pour la phase 1 et l'étape 6/7
+    - Landry, Faroq : Avancement sur l'étape 7
+    - Mathias, Raphaël : Avancement sur l'étape 7
+
+    (Raphaël et Landry ont contracté le COVID et Mathias est cas contact)
+
