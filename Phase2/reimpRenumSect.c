@@ -26,7 +26,6 @@ void supprimer_section(SectionsList *liste, int i)
 	for (int j = i; j < liste->nb_sect - 1; j++)
 	{
 		liste->sectTab[j] = liste->sectTab[j + 1];
-		//memcpy(liste->sectTab[j], liste->sectTab[j + 1], sizeof(liste->sectTab[j + 1]));
 	}
 	liste->nb_sect--;
 }
@@ -37,8 +36,6 @@ void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
 	int taille_supp = 0;
 	for (int i = 0; i < liste->nb_sect; i++)
 	{
-		// probleme liste->sectTab[i].header
-		// printf("size of section = %x\n", liste->sectTab[i].header.sh_size);
 		// modifier l'offset de tous les sections selon la taille de sections supprimees
 		liste->sectTab[i].header.sh_offset -= taille_supp;
 		if (liste->sectTab[i].header.sh_type == SH_REL || liste->sectTab[i].header.sh_type == SH_RELA)
@@ -55,7 +52,7 @@ void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
 	}
 
 	//tester en affichant toutes les sections apres modification
-	
+	/*
 	for (int i = 0; i < liste->nb_sect; i++)
 	{
 		if (strlen(liste->sectTab[i].name) > 17)
@@ -75,7 +72,7 @@ void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
 			   liste->sectTab[i].header.sh_info,
 			   liste->sectTab[i].header.sh_addralign);
 	}
-	
+	*/
 
 	///////////////////////////////////////////////////////
 		// modifier le nombre de section dans le header
