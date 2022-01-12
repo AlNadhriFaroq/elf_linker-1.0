@@ -28,4 +28,4 @@ typedef struct
  * description : Modifie les structures donnees selon l'etape 6.
  * effet de bord : Modification de hedaer et liste
  *******************************************************************************/
-void renumeroter_sections(Elf32_Ehdr header, SectionsList liste);
+void renumeroter_sections(Elf32_Ehdr *header, SectionsList *liste);

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "../Phase1/readelfHeader.h"
 #include "../Phase1/readelfSectTable.h"
 #include "../Phase1/readelfSectLect.h"
@@ -17,39 +18,68 @@
 */
 
 
-void supprimer_section(SectionsList liste, int i)
+void supprimer_section(SectionsList *liste, int i)
 {
 	// Liberer la memoire de la section i
-	free(liste.sectTab[i].dataTab);
-
+	free(liste->sectTab[i].dataTab);
 	//decalage de toutes les sections suivantes la secion i
-	for (int j = i; j < liste.nb_sect - 1; i++){
-		liste.sectTab[j] = liste.sectTab[j+1];
+	for (int j = i; j < liste->nb_sect - 1; j++)
+	{
+		liste->sectTab[j] = liste->sectTab[j + 1];
+		//memcpy(liste->sectTab[j], liste->sectTab[j + 1], sizeof(liste->sectTab[j + 1]));
 	}
-	liste.nb_sect--;
+	liste->nb_sect--;
 }
 
 
-void renumeroter_sections(Elf32_Ehdr header, SectionsList liste)
+void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
 {
 	int taille_supp = 0;
-	
-	for (int i = 0; i < liste.nb_sect; i++)
+	for (int i = 0; i < liste->nb_sect; i++)
 	{
-		// probleme liste.sectTab[i].header
-		printf("size of section = %x\n", liste.sectTab[i].header.sh_size);
-		if (liste.sectTab[i].header.sh_type == SH_REL || liste.sectTab[i].header.sh_type == SH_RELA)
+		// probleme liste->sectTab[i].header
+		// printf("size of section = %x\n", liste->sectTab[i].header.sh_size);
+		// modifier l'offset de tous les sections selon la taille de sections supprimees
+		liste->sectTab[i].header.sh_offset -= taille_supp;
+		if (liste->sectTab[i].header.sh_type == SH_REL || liste->sectTab[i].header.sh_type == SH_RELA)
 		{
 			//calculer la taille totale des sections supprimees
-			taille_supp += liste.sectTab[i].header.sh_size;
+			taille_supp += liste->sectTab[i].header.sh_size;
 			// supprimer une setcion
+
 			supprimer_section(liste, i);
+			//prendre en compte section suivante
+			i--;
 		}
 
-		//modifier l'offset de tous les sections selon la taille de sections supprimees
-		liste.sectTab[i].header.sh_offset -= taille_supp;
 	}
 
-	//modifier le nombre de section dans le header 
-	header.e_shnum = liste.nb_sect;
-}
+	//tester en affichant toutes les sections apres modification
+	
+	for (int i = 0; i < liste->nb_sect; i++)
+	{
+		if (strlen(liste->sectTab[i].name) > 17)
+		{
+			liste->sectTab[i].name[17] = '\0';
+		}
+		printf("  [%2d] %-17s %-15s %08x %06x ", i,
+			   liste->sectTab[i].name,
+			   liste->sectTab[i].type,
+			   liste->sectTab[i].header.sh_addr,
+			   liste->sectTab[i].header.sh_offset);
+		printf("%06x %02x %3s %2d  %2d %2d\n",
+			   liste->sectTab[i].header.sh_size,
+			   liste->sectTab[i].header.sh_entsize,
+			   liste->sectTab[i].flag,
+			   liste->sectTab[i].header.sh_link,
+			   liste->sectTab[i].header.sh_info,
+			   liste->sectTab[i].header.sh_addralign);
+	}
+	
+
+	///////////////////////////////////////////////////////
+		// modifier le nombre de section dans le header
+		header->e_shnum = liste->nb_sect;
+		// modifier les indices de sections dans le header
+		header->e_shstrndx = liste->nb_sect - 1;
+	}

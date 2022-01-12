@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	//ReimpList liste_reimp = lire_reimp_table(liste_sections); // etape 5
 	
 	// Fonctions de modification des structures precedemment definies
-	renumeroter_sections(header, liste_sections);
+	renumeroter_sections(&header, &liste_sections);
 	//corriger_symboles(liste_sections); // etape 7
 	//reimplanter_type_abs(header, liste_sections, struct); // etape 8
 	//Reimplanter_type_jump_call(header, liste_sections, struct); // etape 9
