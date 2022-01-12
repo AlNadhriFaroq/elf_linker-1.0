@@ -34,20 +34,28 @@ void supprimer_section(SectionsList *liste, int i)
 void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
 {
 	int taille_supp = 0;
+	int align=0;
 	for (int i = 0; i < liste->nb_sect; i++)
 	{
 		// modifier l'offset de tous les sections selon la taille de sections supprimees
 		liste->sectTab[i].header.sh_offset -= taille_supp;
-		if (liste->sectTab[i].header.sh_type == SH_REL || liste->sectTab[i].header.sh_type == SH_RELA)
-		{
-			//calculer la taille totale des sections supprimees
-			taille_supp += liste->sectTab[i].header.sh_size;
-			// supprimer une setcion
 
-			supprimer_section(liste, i);
-			//prendre en compte section suivante
-			i--;
+		//bien aligné l'offset pour qu'il soit un mult de 4
+		align= liste->sectTab[i].header.sh_offset % 4 ;
+		if (align != 0)
+		{
+			liste->sectTab[i].header.sh_offset += (4 - align);
 		}
+			if (liste->sectTab[i].header.sh_type == SH_REL || liste->sectTab[i].header.sh_type == SH_RELA)
+			{
+				// calculer la taille totale des sections supprimees
+				taille_supp += liste->sectTab[i].header.sh_size;
+				// supprimer une setcion
+
+				supprimer_section(liste, i);
+				// prendre en compte section suivante
+				i--;
+			}
 
 	}
 
