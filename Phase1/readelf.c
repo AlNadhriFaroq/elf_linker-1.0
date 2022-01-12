@@ -45,11 +45,11 @@ int main(int argc, char *argv[])
 				afficher_entete(header);
 			}
 			
-			// Lecture de la table des sections du fichier
+			// Lecture du fichier
 			SectionsList liste_sections = lire_sections_table(elfFile, header);
-			
-			// Lecture du contenu des sections
 			lire_sections(elfFile, liste_sections);
+			SymbolesList liste_symboles = lire_symboles_table(liste_sections);
+			RelocTable table_reimp = lire_reimp_table(liste_sections, liste_symboles);
 			
 			// Affichage de la table des sections si l'option '-S' est activee
 			if (opt.S)
@@ -57,20 +57,16 @@ int main(int argc, char *argv[])
 				afficher_sections_table(liste_sections, header.e_shoff);
 			}
 			
-			// Lecture et affichage de la table des symboles si l'option '-s' est activee
-			if (opt.s)
-			{
-				SymbolesList liste_symboles = lire_symboles_table(liste_sections);
-				afficher_symboles_table(liste_symboles);
-				supprimer_symboles_table(liste_symboles);
-			}
-			
 			// Lecture et affichage de la table de reimplantation si l'option '-r' est activee
 			if (opt.r)
 			{
-				RelocTable table_reimp = lire_reimp_table(liste_sections);
 				afficher_reimp_table(table_reimp);
-				supprimer_reimp_table(table_reimp);
+			}
+			
+			// Lecture et affichage de la table des symboles si l'option '-s' est activee
+			if (opt.s)
+			{
+				afficher_symboles_table(liste_symboles);
 			}
 			
 			// Affichage du contenu des sections si l'option '-x' est activee
@@ -84,6 +80,8 @@ int main(int argc, char *argv[])
 			}
 			
 			supprimer_sections_table(liste_sections);
+			supprimer_symboles_table(liste_symboles);
+			supprimer_reimp_table(table_reimp);
 			fclose(elfFile);
 		}
 	}
