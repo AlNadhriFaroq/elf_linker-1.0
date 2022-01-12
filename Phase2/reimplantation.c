@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	lire_sections(elfFile, liste_sections);
 	uint8_t *programs_table = lire_programs_table(elfFile, header, liste_sections);
 	SymbolesList liste_symboles = lire_symboles_table(liste_sections);
-	//ReimpList liste_reimp = lire_reimp_table(liste_sections); // etape 5
+	RelocTable table_reimp = lire_reimp_table(liste_sections, liste_symboles);
 	
 	// Fonctions de modification des structures precedemment definies
 	
@@ -88,14 +88,15 @@ int main(int argc, char *argv[])
 	
 	// Ecriture dans le fichier de destination outFile
 	ecrire_symboles_table(liste_sections, liste_symboles);
-	
-	//ecrire_reimp_table(liste_sections, liste_reimp); // etape 5
+	ecrire_reimp_table(liste_sections, table_reimp);
 	ecrire_entete(outFile, header);
 	ecrire_programs_table(outFile, programs_table);
 	ecrire_sections(outFile, liste_sections, header.e_shoff);
 	ecrire_sections_table(outFile, liste_sections);
 
 	supprimer_sections_table(liste_sections);
+	supprimer_symboles_table(liste_symboles);
+	supprimer_reimp_table(table_reimp);
 	fclose(elfFile);
 	fclose(outFile);
 	// ici : appels aux modules des etapes 10 et 11
