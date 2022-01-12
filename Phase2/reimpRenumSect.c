@@ -41,10 +41,10 @@ void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
 		liste->sectTab[i].header.sh_offset -= taille_supp;
 
 		//bien aligné l'offset pour qu'il soit un mult de 4
-		align= liste->sectTab[i].header.sh_offset % 4 ;
+		align= liste->sectTab[i].header.sh_offset % 2 ;
 		if (align != 0)
 		{
-			liste->sectTab[i].header.sh_offset += (4 - align);
+			liste->sectTab[i].header.sh_offset += (2 - align);
 		}
 			if (liste->sectTab[i].header.sh_type == SH_REL || liste->sectTab[i].header.sh_type == SH_RELA)
 			{
@@ -60,8 +60,8 @@ void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
 	}
 
 	//tester en affichant toutes les sections apres modification
-	/*
-	for (int i = 0; i < liste->nb_sect; i++)
+	
+	/*for (int i = 0; i < liste->nb_sect; i++)
 	{
 		if (strlen(liste->sectTab[i].name) > 17)
 		{

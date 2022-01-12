@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
 	//ReimpList liste_reimp = lire_reimp_table(liste_sections); // etape 5
 	
 	// Fonctions de modification des structures precedemment definies
+	
 	renumeroter_sections(&header, &liste_sections);
 	//corriger_symboles(liste_sections); // etape 7
 	//reimplanter_type_abs(header, liste_sections, struct); // etape 8
@@ -87,6 +88,7 @@ int main(int argc, char *argv[])
 	
 	// Ecriture dans le fichier de destination outFile
 	ecrire_symboles_table(liste_sections, liste_symboles);
+	
 	//ecrire_reimp_table(liste_sections, liste_reimp); // etape 5
 	ecrire_entete(outFile, header);
 	ecrire_programs_table(outFile, programs_table);
