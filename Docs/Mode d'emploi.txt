@@ -28,3 +28,20 @@ Exemple de lancement du programme pour les etapes 1, 2, 4 ou 5 :
 Exemple de lancement du programme pour l'etape 3 : 
   ./readelf -x 8 readelf.o
   ./readelf -x .text readelf.o
+
+
+PHASE 2 : 
+
+Protocole : 
+  * Avoir déja utilisé la commande make dans la phase 1
+  * Se placer dans le dossier Phase 2                     | cd Phase2
+  * Compiler avec le Makefile                             | make
+  * Executer le projet                                    | ./reimplantation <nomFichier>
+
+Cet exécutable permet de lancer l'étape 6 et de supprimer les sections reimplantation.
+
+Exemple de lancement du programme : 
+  ./reimplantation reimplantation.o
+
+Pour pouvoir lire le contenu du fichier résultat, on utilise la commande suivante : 
+  hexdump -C outFile
