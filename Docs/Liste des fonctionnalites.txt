@@ -31,8 +31,8 @@ Etape 4 : ./readelf -s <fichier>
 Etape 5 : ./readelf -r <fichier>
 
 Phase 2 : dans le dossier courant Phase2, utiliser make, puis les commandes suivantes :
-Etape 6 : ./reimp <fichier> <fichier resultat>
-Etape 7 : 
+Etape 6 : ./reimplementation <fichier>, renvoie un fichier outFile lisible avec la commande : hexdump -C outFile
+Etape 7 : Le code ne renvoie rien, mais l'algorithme est présent sous forme de commentaire
 
 Tests : dans le dossier courant Tests, utiliser les commandes suivantes : 
 Phase 1 : bash tests_phase1_affichages.sh <fichier> (lancement automatique des étapes 1 à 5)
