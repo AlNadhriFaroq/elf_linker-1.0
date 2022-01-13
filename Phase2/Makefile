@@ -6,7 +6,7 @@ all: reimplantation
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-reimpRenumSect.o: reimpRenumSect.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o
+reimpRenumSect.o: reimpRenumSect.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o
 reimpCorrectSymb.o: reimpCorrectSymb.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o ../Phase1/readelfSymbTable.o
 reimpTypeAbs.o: reimpTypeAbs.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o ../Phase1/readelfSymbTable.o ../Phase1/readelfReimpTable.o
 reimpTypeJumpCall.o: reimpTypeJumpCall.h ../Phase1/readelfHeader.o ../Phase1/readelfSectTable.o ../Phase1/readelfSectLect.o ../Phase1/readelfSymbTable.o ../Phase1/readelfReimpTable.o

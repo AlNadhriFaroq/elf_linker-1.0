@@ -3,29 +3,26 @@
 #include <stdint.h>
 #include "../Phase1/readelfHeader.h"
 #include "../Phase1/readelfSectTable.h"
-#include "../Phase1/readelfSectLect.h"
 
-#define SH_RELA 4
-#define SH_REL 9
 
-typedef struct
-{
-	uint32_t p_type;
-	uint32_t p_offset;
-	uint32_t p_vaddr;
-	uint32_t p_paddr;
-	uint32_t p_filesz;
-	uint32_t p_memsz;
-	uint32_t p_flags;
-	uint32_t p_align;
-} Elf32_Phdr;
+/*******************************************************************************
+ * supprimer_section
+ * parametres : SectionsList * liste, int i
+ * resultat : uint32_t
+ * description : Modifie les sections et la table des sections en supprimant la
+ *               la section i.
+ * effet de bord : Modifie le contenu de la structure donnee
+ *******************************************************************************/
+uint32_t supprimer_section(SectionsList *liste, int i);
 
 
 /*******************************************************************************
  * renumeroter_sections
- * parametres : Elf32_Ehdr header, SectionsList liste
- * resultat : aucun
- * description : Modifie les structures donnees selon l'etape 6.
- * effet de bord : Modification de hedaer et liste
+ * parametres : SectionsList * liste, Elf32_Ehdr *header
+ * resultat : void
+ * description : Modifie les sections, la table des sections et le header en
+ *               suppriment les sections de type SH_REL et SH_RELA.
+ * effet de bord : Modifie le contenu des structures donnees
  *******************************************************************************/
-void renumeroter_sections(Elf32_Ehdr *header, SectionsList *liste);
+void renumeroter_sections(SectionsList * liste, Elf32_Ehdr *header);
+
