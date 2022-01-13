@@ -4,87 +4,87 @@
 #include <string.h>
 #include "../Phase1/readelfHeader.h"
 #include "../Phase1/readelfSectTable.h"
-#include "../Phase1/readelfSectLect.h"
 #include "reimpRenumSect.h"
 
-#define SH_RELA 4
-#define SH_REL 9
 
-/*
-  A faire:
-  - supprimer sh_rela et sh_rel section
-  - supprimer sh_rela et sh_rel entete de la section header 
-  - renumeroter les section et modfier les offset des sections
+/*	supprimer_section(SectionsList *liste, int i)
+		Supprime la section i
 */
-
-
-void supprimer_section(SectionsList *liste, int i)
+uint32_t supprimer_section(SectionsList *liste, int i)
 {
-	// Liberer la memoire de la section i
+	// Adresse et taille de la section a supprimer
+	uint32_t offset = liste->sectTab[i].header.sh_offset;
+	uint32_t size = liste->sectTab[i].header.sh_size;
+	
+	// Liberation de la memoire du contenu de la section i
 	free(liste->sectTab[i].dataTab);
-	//decalage de toutes les sections suivantes la secion i
+	
+	// Parcours des sections a partir de celle a supprimer 
 	for (int j = i; j < liste->nb_sect - 1; j++)
 	{
+		// Decalage de toutes les sections suivants la section a supprimer
 		liste->sectTab[j] = liste->sectTab[j + 1];
+		
+		// Decalage de l'adresse de la section decalee si celle_ci se situe apres celle supprimee
+		if (liste->sectTab[j].header.sh_offset > offset)
+		{
+			liste->sectTab[j].header.sh_offset -= size;
+		}
 	}
+
+	// Reallocation de la liste des sections
 	liste->nb_sect--;
+	liste->sectTab = realloc(liste->sectTab, sizeof(Section) * liste->nb_sect);
+
+	// Parcours des sections
+	for (int j = 0; j < liste->nb_sect - 1; j++)
+	{
+		// Decrementation des sh_link pour les sections decalees
+		if (liste->sectTab[j].header.sh_link > i)
+		{
+			liste->sectTab[j].header.sh_link--;
+		}
+	}
+	
+	// Renvoie de la taille de la section supprimee
+	return size;
 }
 
 
-void renumeroter_sections(Elf32_Ehdr *header, SectionsList * liste)
+/*	renumeroter_sections(SectionsList * liste, Elf32_Ehdr *header)
+		Supprime toute les section de type SH_REL et SH_RELA
+*/
+void renumeroter_sections(SectionsList * liste, Elf32_Ehdr *header)
 {
-	int taille_supp = 0;
-	int align=0;
-	for (int i = 0; i < liste->nb_sect; i++)
-	{
-		// modifier l'offset de tous les sections selon la taille de sections supprimees
-		liste->sectTab[i].header.sh_offset -= taille_supp;
-
-		//bien aligné l'offset pour qu'il soit un mult de 4
-		align= liste->sectTab[i].header.sh_offset % 2 ;
-		if (align != 0)
-		{
-			liste->sectTab[i].header.sh_offset += (2 - align);
-		}
-			if (liste->sectTab[i].header.sh_type == SH_REL || liste->sectTab[i].header.sh_type == SH_RELA)
-			{
-				// calculer la taille totale des sections supprimees
-				taille_supp += liste->sectTab[i].header.sh_size;
-				// supprimer une setcion
-
-				supprimer_section(liste, i);
-				// prendre en compte section suivante
-				i--;
-			}
-
-	}
-
-	//tester en affichant toutes les sections apres modification
+	int i = 0;
 	
-	/*for (int i = 0; i < liste->nb_sect; i++)
+	// Parcours des sections
+	while (i < liste->nb_sect)
 	{
-		if (strlen(liste->sectTab[i].name) > 17)
+		// Cas ou la section est de type SH_RELA ou SH_REL
+		if (liste->sectTab[i].header.sh_type == 9 || liste->sectTab[i].header.sh_type == 4)
 		{
-			liste->sectTab[i].name[17] = '\0';
+			// Suppression de la section
+			uint32_t size = supprimer_section(liste, i);
+			
+			// Modification de l'adresse de la table de sections dans le header
+			header->e_shoff -= size;
+			
+			// Decrementation du nombre de section dans le header
+			header->e_shnum--;
 		}
-		printf("  [%2d] %-17s %-15s %08x %06x ", i,
-			   liste->sectTab[i].name,
-			   liste->sectTab[i].type,
-			   liste->sectTab[i].header.sh_addr,
-			   liste->sectTab[i].header.sh_offset);
-		printf("%06x %02x %3s %2d  %2d %2d\n",
-			   liste->sectTab[i].header.sh_size,
-			   liste->sectTab[i].header.sh_entsize,
-			   liste->sectTab[i].flag,
-			   liste->sectTab[i].header.sh_link,
-			   liste->sectTab[i].header.sh_info,
-			   liste->sectTab[i].header.sh_addralign);
+		
+		// Cas ou la section est celle contenant les noms des sections
+		else if (strcmp(liste->sectTab[i].name, ".shstrtab") == 0)
+		{
+			// Changement de son index dans le header
+			header->e_shstrndx = i;
+			i++;
+		}
+		else
+		{
+			i++;
+		}
 	}
-	*/
+}
 
-	///////////////////////////////////////////////////////
-		// modifier le nombre de section dans le header
-		header->e_shnum = liste->nb_sect;
-		// modifier les indices de sections dans le header
-		header->e_shstrndx = liste->nb_sect - 1;
-	}

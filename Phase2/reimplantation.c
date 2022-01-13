@@ -81,14 +81,13 @@ int main(int argc, char *argv[])
 	
 	// Fonctions de modification des structures precedemment definies
 	
-	renumeroter_sections(&header, &liste_sections);
+	renumeroter_sections(&liste_sections, &header);
 	//corriger_symboles(liste_sections); // etape 7
 	//reimplanter_type_abs(header, liste_sections, struct); // etape 8
 	//Reimplanter_type_jump_call(header, liste_sections, struct); // etape 9
 	
 	// Ecriture dans le fichier de destination outFile
 	ecrire_symboles_table(liste_sections, liste_symboles);
-	ecrire_reimp_table(liste_sections, table_reimp);
 	ecrire_entete(outFile, header);
 	ecrire_programs_table(outFile, programs_table);
 	ecrire_sections(outFile, liste_sections, header.e_shoff);
