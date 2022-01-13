@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	// Fonctions de modification des structures precedemment definies
 	
 	renumeroter_sections(&liste_sections, &liste_symboles, &header);
-	//corriger_symboles(liste_sections); // etape 7
+	corriger_symboles(&liste_sections, &liste_symboles);
 	//reimplanter_type_abs(header, liste_sections, struct); // etape 8
 	//Reimplanter_type_jump_call(header, liste_sections, struct); // etape 9
 	

@@ -9,9 +9,11 @@
 
 /*******************************************************************************
  * corriger_symboles
- * parametres : SectionsList liste
+ * parametres : SectionsList *liste_sect, SymbolesList *liste_symb
  * resultat : aucun
- * description : Modifie la structure donnee selon l'etape 6.
- * effet de bord : Modification de liste
+ * description : Modifie la table des sections et la tables des symboles en
+ *               changeant les adresses.
+ * effet de bord : Modification de structures donnees
  *******************************************************************************/
-void corriger_symbole(SectionsList liste);
+void corriger_symboles(SectionsList *liste_sect, SymbolesList *liste_symb);
+
